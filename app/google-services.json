@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "761307543772",
+    "project_id": "siflusso-3008b",
+    "storage_bucket": "siflusso-3008b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761307543772:android:dd99f9327b6102f75ddc19",
+        "android_client_info": {
+          "package_name": "com.siflusso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeVX3y14CWb_F9p1ijZoaX0olnZBRRgyA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

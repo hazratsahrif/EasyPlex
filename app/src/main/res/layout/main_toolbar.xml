@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="controller"
+            type="com.siflusso.ui.users.MenuHandler" />
+    </data>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:contentInsetStartWithNavigation="0dp"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/Toolbar.Light">
+
+        <ImageView
+            android:id="@+id/logo_image_top"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:autoMirrored="true"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:contentDescription="@string/image" />
+
+
+        <LinearLayout
+            android:id="@+id/NavigationTabLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:nextFocusDown="@+id/content_home"
+            android:orientation="horizontal"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+
+            >
+
+            <LinearLayout
+                android:id="@+id/mylist"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/selected_white_login"
+                android:focusable="true"
+                android:gravity="center"
+                android:nextFocusLeft="@+id/fading_edge_layout2"
+                android:nextFocusDown="@+id/fading_edge_layout2"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
+
+
+                <ImageView
+                    android:id="@+id/myListImage"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:contentDescription="@string/image"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_favorite"
+                    app:layout_constraintEnd_toStartOf="@id/tubi_tv_controller_guideline_right"
+                    app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
+                    app:tint="@color/white" />
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/settings"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/selected_white_login"
+                android:focusable="true"
+                android:gravity="center"
+                android:nextFocusLeft="@+id/fading_edge_layout2"
+                android:nextFocusDown="@+id/fading_edge_layout2"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
+
+
+                <ImageView
+                    android:id="@+id/settingsImage"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:contentDescription="@string/image"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_settings"
+                    app:layout_constraintEnd_toStartOf="@id/tubi_tv_controller_guideline_right"
+                    app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
+                    app:tint="@color/white" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/userProfile"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:focusable="true"
+                android:visibility="@{controller.isProfileSettingEnabled ? View.VISIBLE : View.GONE}"
+                android:background="@drawable/selected_white_login"
+                android:gravity="center"
+                android:nextFocusLeft="@+id/fading_edge_layout2"
+                android:nextFocusDown="@+id/fading_edge_layout2"
+                android:orientation="horizontal"
+                >
+
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/userImg"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:civ_border="true"
+                    app:civ_border_color="@color/main_color"
+                    app:civ_border_width="1dp"
+                    app:civ_shadow_radius="5dp"
+                    app:layout_constraintEnd_toStartOf="@id/tubi_tv_controller_guideline_right"
+                    app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top" />
+
+            </LinearLayout>
+
+
+
+
+        </LinearLayout>
+
+
+    </androidx.appcompat.widget.Toolbar>
+</layout>

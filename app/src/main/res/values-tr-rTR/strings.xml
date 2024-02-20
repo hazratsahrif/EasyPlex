@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+
+    <!-- Movie Details -->
+    <string name="movie_original_label" translatable="false">Film</string>
+    <string name="movie_release_label" translatable="false">Vizyon Tarihi</string>
+    <string name="movie_genres_text" translatable="false">Gerilim, Aksiyon, Bilim Kurgu</string>
+    <string name="movie_overview_label" translatable="false">Özet</string>
+    <string name="movie_overview_text" translatable="false">Ailesinden uzak bir yolda gezen 10 yaşındaki bir kızın bir yol</string>
+    <string name="movie_cast_label">Oyuncular</string>
+
+    <!-- Retry -->
+    <string name="home">Ana Sayfa</string>
+
+
+
+    <!-- App Strings  -->
+    <string name="resume">Devam et</string>
+    <string name="settings">Ayarlar</string>
+    <string name="discover">Keşfedin</string>
+    <string name="library">Kitaplık</string>
+    <string name="upcoming">Yakında</string>
+    <string name="streaming">Akış</string>
+    <string name="live_text">Canlı</string>
+    <string name="share_msg">Merhaba, bu medyayı sizinle paylaşmak istiyorum.</string>
+    <string name="about_wifi_warning">Yalnızca Wi-Fi üzerinden oynatmayı seçtiniz. Değiştirmek için uygulama ayarlarına gidin.</string>
+    <string name="about_no_stream_download">Bu Filmi Daha Sonra Kontrol Ediniz İndirme Yok.</string>
+    <string name="about_no_stream_download_episode">Bu Bölüm İçin Şimdilik İndirme Mevcut Değil bizimle iletişime geçiniz</string>
+    <string name="about_no_stream">"Bu Filmi İçin Şimdilik Akış Mevcut Değil bizimle iletişime geçiniz "</string>
+    <string name="ep_n" translatable="false">Bölüm </string>
+    <string name="about_error_login">Bu e-posta adresi ile bağlantılı bir hesap bulamadık. lütfen yeniden deneyin ya da yeni bir hesap oluşturun.</string>
+    <string name="err_email">E-posta geçerli bir e-posta adresi olmalıdır.</string>
+    <string name="err_name">Ad alanı gereklidir.</string>
+    <string name="err_password">Completed</string>
+    <string name="controller_time_position_text_default" translatable="false">00:00:00</string>
+    <string name="no_media_error_message" translatable="false">Bir Media Model in medya oynatmak için faaliyete başlama amacına iletilmesi gerekiyor</string>
+    <string name="commercial" translatable="false">Genel</string>
+    <string name="movies_amp_series" translatable="false"><![CDATA[Filmler & Diziler]]></string>
+    <string name="title">BAŞLIK</string>
+    <string name="genre">Tür</string>
+    <string name="play_trailer">Fragman</string>
+    <string name="release_date">YAYIN TARİHİ</string>
+    <string name="seasons_8" translatable="false">SEZON:</string>
+    <string name="synopsis">Özet</string>
+    <string name="details">Ayrıntı</string>
+    <string name="starring">Başrol</string>
+    <string name="seasons">Sezonlar</string>
+    <string name="search_movies_series">Film,Dizi,Anime Arayabilirsin</string>
+    <string name="no_relateds_movies_found">İlgili İçerik Bulunamadı</string>
+    <string name="no_list_result">Listenize Favori Dizi,Film ve Anime ekleyebilirsiniz.</string>
+    <string name="list_add_later">Böylece eklediğiniz Dizi,Film ve Animeleri daha sonra kolayca bulabilirsiniz ve sonra izleye bilirsiniz.</string>
+    <string name="premuim">Premuim</string>
+    <string name="already_have_an_account">ZATEN BİR HESABIN VAR MI?</string>
+    <string name="password">Parola</string>
+    <string name="email">E-posta</string>
+    <string name="name">Adın</string>
+    <string name="register">Ü Y E O L</string>
+    <string name="update_profile">G Ü N C E L L E</string>
+    <string name="copyright">Copyright © 2021 EASYPLEX. Her hakkı saklıdır.</string>
+    <string name="image">Image</string>
+    <string name="start_watching">İZLEMEYE BAŞLA</string>
+    <string name="register_sucess">Üyeliğiniz başarılı oldu</string>
+    <string name="recommended_for_you">SİZİN İÇİN ÖNERİLEN</string>
+    <string name="streaming_home">STREAMING</string>
+    <string name="trending_now">TRENDLER</string>
+    <string name="new_releases">YENİ EKLENEN FİLMLER</string>
+    <string name="popular_series">POPÜLER DİZİLER</string>
+    <string name="latest_series">YENİ EKLENEN DİZİLER</string>
+    <string name="new_this_week">BU HAFTA EKLENEN İÇERİKLER</string>
+    <string name="latest_animes">YENİ EKLENEN ANİMELER</string>
+    <string name="most_popular">En popüler İçerikler</string>
+    <string name="auth_name" translatable="false">Yetki Adı</string>
+    <string name="user_EasyPlex_com" translatable="false">EASYPLEX</string>
+    <string name="free">Ücretsiz</string>
+    <string name="allow_notifications">Bildirimlere İzin Ver</string>
+    <string name="wi_fi_only">Yalnızca Wi-Fi</string>
+    <string name="auto_play">Otomatik Oynat</string>
+    <string name="substitle_size">Altyazı Boyutu</string>
+    <string name="current_size">Mevcut Boyut</string>
+    <string name="current_background">Mevcut Renk</string>
+    <string name="clear_my_list">Listemi Temizle</string>
+    <string name="clear_history">İzleme Geçmişini Temizlemek istiyor musunuz ?</string>
+    <string name="clear_cache_msg">Önbelleğe alınmış verileri temizleyecektir!</string>
+    <string name="clear_cache">Önbelleği Temizle</string>
+    <string name="about_us">Hakkımızda</string>
+    <string name="confirm">Onayla</string>
+    <string name="trailer_loading">Fragman Yükleniyor</string>
+    <string name="genres_list_is_empty">Türler listesi boş</string>
+    <string name="episodes">Bölümler</string>
+    <string name="next_episode">Sonraki Bölüm</string>
+    <string name="check_later">Önceki Bölüm</string>
+    <string name="privacy_amp_policy"><![CDATA[Gizlilik ve Politika]]></string>
+    <string name="decilne">REDDET</string>
+    <string name="accept">ONAYLIYORUM</string>
+    <string name="relateds">İlgili</string>
+    <string name="substitles">Altyazı</string>
+    <string name="login">G İ R İ Ş</string>
+    <string name="skip">A T L A</string>
+    <string name="signup">Kayıt Olmak İçin Tıklayınız</string>
+    <string name="forget">Şifre mi unutum ?</string>
+    <string name="no_upcoming_movies_added">Yaklaşan Filmler Eklenmedi</string>
+    <string name="no_download_movies_added">İndirmeye Eklenmedi</string>
+    <string name="this_content_if_only_for_vip">Bu içerik sadece VIP içindir</string>
+    <string name="sorry">Üzgünüm</string>
+    <string name="back">GERİ</string>
+    <string name="ad">Reklam</string>
+    <string name="please_try_another_genre">Lütfen başka bir tür seçiniz.</string>
+    <string name="try_searching_for_another_movie_show">Başka bir film,dizi ve anime aramayı deneyin</string>
+    <string name="oh_darn_we_don_t_have_that">Lanet olsun... Bu içerik kütüphanemizde yok başka bir şey arat adamım</string>
+    <string name="edit_profile">Profil Düzenle</string>
+    <string name="support">DESTEK</string>
+    <string name="thank_you">Teşekkürler</string>
+    <string name="the_transaction_was_successful">İşlem başarılı oldu</string>
+    <string name="status">durum</string>
+    <string name="id" translatable="false">ID</string>
+
+
+    <string name="AGREE">KABUL ET</string>
+    <string name="DISAGREE">KABUL ETMİYORUM</string>
+
+    <!--Playback Speed copy-->
+    <string name="movie_rating" translatable="false">8.5</string>
+    <string name="try_easyplex_vip">Bugünden İtibaren Abone Olun Yakında</string>
+    <string name="watch_video_ads_to_unlock">KİLİDİNİ AÇMAK İÇİN VİDEO REKLAMLARI İZLEYİN</string>
+    <string name="subscribe_now">ŞİMDİ ABONE OLUN / YAKINDA </string>
+    <string name="disable_player_ads"></string>
+    <string name="turn_off_ads_banner_interstitial_ads">(Banner,İnterstisyel reklamlar Kapat )</string>
+    <string name="play_premium_content_without_restrictions"></string>
+    <string name="download_premium_content">Premium içeriği indirin</string>
+    <string name="vip_features">Abonelik ile. Ayda 0.50krş TL \' dan başlayan fiyatlarla.</string>
+    <string name="custom_text_here">Metini Düzenle</string>
+    <string name="update_message">güncelleme mesajı</string>
+    <string name="version_2_0">Version 2.3</string>
+    <string name="update">Güncelle</string>
+
+    <!-- Change the following strings as required -->
+    <string name="subscribe">Abone OL</string>
+    <string name="payment_failed_please_try_again">Ödeme başarısız oldu - lütfen tekrar deneyin</string>
+    <string name="valid_until" translatable="false">Valid until : 09–20-2020</string>
+    <string name="cancel_subscription">Aboneliği İptal Et</string>
+    <string name="track_selection_title">Parça seç</string>
+    <string name="cant_show">Ödüllü video gösterilemiyor</string>
+    <string name="continue_watching">İzlemeye Devam Et</string>
+    <string name="clear_watch_history">İzleme Geçmişini Temizle</string>
+    <string name="media_route_menu_title">Cast</string>
+    <string name="play_media_as_embed">Medyayı Gömülü Olarak Oynat</string>
+    <string name="audio">Ses</string>
+    <string name="sort_by">Sırala</string>
+    <string name="navigation_drawer_open">Navigasyon çekmecesini aç</string>
+    <string name="navigation_drawer_close">Gezinme çekmecesini kapat</string>
+    <string name="suggestions">Öneriler</string>
+    <string name="privacy_policy">Gizlilik Politikası</string>
+    <string name="latest_channels">TV KANALLARI</string>
+    <string name="downloads">İndirilenler</string>
+    <string name="if_you_re_having_audio_problems_enable_this_option">Ses sorunlarınız varsa, daha fazla ses uzantısını desteklemek için bu seçeneği etkinleştirin.</string>
+    <string name="are_you_sure_to_delete_from_your_watching_history">Silmek istediğinize emin misiniz</string>
+    <string name="report_broken_link">Kırık Bağlantıyı Rapor Et</string>
+    <string name="movies">FİLMLER</string>
+    <string name="series">DİZİLER</string>
+    <string name="animes">ANİMELER</string>
+    <string name="version">EASYPLEX: %1$s</string>
+    <string name="introducing_cast">TV Üzerinden İzle</string>
+    <string name="sorry_this_content_is_only_available_for_easyplex_vip_users">Üzgünüz, bu içerik yalnızca Premuim kullanıcıları tarafından kullanılabilir</string>
+    <string name="app_id" translatable="false">CC1AD845</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="error">HATTA</string>
+    <string name="about_app">ЯB hakkında</string>
+
+    <!-- Error messages -->
+    <!-- onApplicationConnectionFailed() errors -->
+    <string name="oops" translatable="false">Oops</string>
+
+    <!-- Preferences -->
+    <string name="prefs_header_application">Uygulama Davranışı</string>
+    <string name="prefs_header_application_summary">Uygulamanın TV de nasıl davranacağını kontrol edin</string>
+    <string name="prefs_volume_title">Birim Atama</string>
+    <string name="prefs_volume_title_summary">Controls %1$s</string>
+    <string name="prefs_volume_dialog_title">Volume Assignment</string>
+    <string name="prefs_volume_default">Cihaz</string>
+
+
+    <!-- Queue -->
+    <string name="show_queue">Sırayı Göster</string>
+    <string name="queue_list">Sıra</string>
+    <string name="queue_tag_item">sıra-etiket-öğe</string>
+    <string name="play_now">Şimdi Oynat</string>
+    <string name="play_next">Sonrakini Oynat</string>
+    <string name="add_to_queue">Sıraya Ekle</string>
+    <string name="action_clear_queue">Kuyruğu Temizle</string>
+    <string name="queue_item_added_to_play_next">Sonraki izlemek için bir içerik eklendi</string>
+    <string name="queue_item_added_to_queue">Kuyruğa bir içerik eklendi</string>
+    <string name="select_quality">Bir Sunucu Seçin</string>
+    <string name="download_for">İndirmek için</string>
+    <string name="has_started">başladı…</string>
+
+
+
+    <!-- ADS NETWORKS -->
+
+
+    <!-- Don't Change -->
+    <string name="applovin" translatable="false">AppLovin</string>
+
+    <!-- Don't Change -->
+    <string name="appnext" translatable="false">AppNext</string>
+
+    <!-- Don't Change -->
+    <string name="ironsource" translatable="false">Ironsource</string>
+
+    <!-- Don't Change -->
+    <string name="vungle" translatable="false">Vungle</string>
+
+    <!-- Don't Change -->
+    <string name="startapp" translatable="false">StartApp</string>
+    <!-- Don't Change -->
+    <string name="unityads" translatable="false">UnityAds</string>
+    <!-- Don't Change -->
+    <string name="admob" translatable="false">Admob</string>
+    <!-- Don't Change -->
+    <string name="appodeal" translatable="false">Appodeal</string>
+    <!-- Don't Change -->
+    <string name="facebook" translatable="false">Facebook</string>
+    <!-- Don't Change -->
+    <string name="auto" translatable="false">Ses</string>
+
+
+
+
+    <string name="autoplay_on">Otomatik Kullan Açık</string>
+    <string name="autoplay_off">Otomatik Kullan Kapalı</string>
+    <string name="has_been_started">başladı…</string>
+    <string name="unable_cast">Yayına Bağlanılamadı</string>
+    <string name="ready_5sec">5 saniye içinde hazır olacak</string>
+    <string name="select_subs">Altyazı Seçin</string>
+    <string name="video_qualities">Video Kalitesi</string>
+    <string name="aspect_ratio">En Boy Oranı</string>
+    <string name="current_aspect">Mevcut en boy oranı</string>
+
+    <!--Playback Menu titles-->
+    <string name="playback_setting_speed_title">Hız</string>
+
+    <!--Playback Speed copy-->
+    <string name="playback_speed_a_quarter" translatable="false">0.25x</string>
+    <string name="playback_speed_a_half" translatable="false">0.5x</string>
+    <string name="playback_speed_three_quarter" translatable="false">0.75x</string>
+    <string name="playback_speed_normal">Normal</string>
+    <string name="playback_speed_one_and_a_quarter" translatable="false">1.25x</string>
+    <string name="playback_speed_one_and_a_half" translatable="false">1.5x</string>
+    <string name="playback_speed_one_and_three_quarter" translatable="false">1.75x</string>
+    <string name="playback_speed_two" translatable="false">2x</string>
+    <string name="up_next">Sıradaki:</string>
+    <string name="empty_queue">Boş Kuyruk</string>
+    <string name="lecture">Şimdi İzle</string>
+    <string name="vip">VIP</string>
+    <string name="are_you_sure_you_want_to_cancel_your_subscription">Aboneliğinizi iptal etmek istediğinizden emin misiniz ?</string>
+    <string name="write_something">Bir şey yaz ...</string>
+    <string name="mylist">Listem</string>
+    <string name="plan_name">ADI</string>
+    <string name="player_default">Varsayılan</string>
+    <string name="player_43" translatable="false">4:3</string>
+    <string name="player_169" translatable="false">16:9</string>
+    <string name="player_fullscreen">tam ekran</string>
+    <string name="player_room">Büyüt</string>
+    <string name="restart">Yeniden Başlat</string>
+    <string name="source_quality">Kaynak Kalitesini Seçin</string>
+    <string name="lists_movies">Film listeleri</string>
+    <string name="lists_series">Dizi listeleri</string>
+    <string name="lists_animes">Animes listeleri</string>
+    <string name="lists_streaming">Akış listeleri</string>
+    <string name="from_history">izleme geçmişinden silinsin mi?</string>
+    <string name="unable_to_get_genres">Tür Listeleri Alınamıyor</string>
+    <string name="views">Görüntülenme:</string>
+    <string name="latest_episodes">YENİ EKLENEN DİZİ BÖLÜMLERİ</string>
+    <string name="latest_episodes_animes">SON EKLENEN ANİME BÖLÜMLERİ</string>
+    <string name="latest_movies_amp_series" translatable="false"><![CDATA[TOP10]]></string>
+    <string name="player_substitles">Altyazı...</string>
+    <string name="add_to_my_list_player">Listeme Ekle</string>
+    <string name="select_subs_player">Abonelekleri seçin..</string>
+    <string name="choosed_for_you">Sizin İçin Seçtiklermiz</string>
+    <string name="skip_recap">FRAGMANI GEÇ</string>
+    <string name="resumes">İzlemeye Devam et</string>
+    <string name="select_qualities">Video Kalitesi Seçin</string>
+    <string name="suggested_programmes">Önerilen Programlar</string>
+    <string name="speed_normal" translatable="false">Normal</string>
+
+    <string name="choose_your_launch_player">Video Oynatıcınızı Seçiniz</string>
+    <string name="my_downloads">İNDİRİLENLER</string>
+    <string name="loading_rewards">Yükleme Ödülü</string>
+    <string name="icon_desc" translatable="false">Ad icon</string>
+    <string name="image_desc" translatable="false">Ad image</string>
+    <string name="sponsored">Sponsorlu</string>
+    <string name="not_found_series">Dizi, veritabanımızda bulunamadı!</string>
+    <string name="from_your_history">izleme geçmişinden mi?</string>
+    <string name="sub_setting_clear_cache_start">Dosya Boyutu</string>
+    <string name="sub_setting_clear_cache_end">dir</string>
+    <string name="servers">Sunucular</string>
+    <string name="captions_built_in">Altyazılar (Yerleşik)</string>
+    <string name="playback_speed">Oynatma Hızı</string>
+    <string name="external_players">Harici Video Oynatıcı</string>
+    <string name="choose_downloads_options">İndirme Yöntemi Seçin</string>
+    <string name="current_localtion">Mevcut Konum :</string>
+    <string name="pinned">Sabit</string>
+    <string name="grant">İzin</string>
+    <string name="storage_warning">Depolama için izin verilmedi.</string>
+    <string name="history_cleared">İzleme Geçmisi temizlendi!</string>
+    <string name="nothing_selected">Hiçbir şey seçilmedi</string>
+    <string name="need_storage_permission">\" indirme listesini görüntülemek için depolama izni gerekiyor\"</string>
+    <string name="new_episodes">YENİ BÖLÜMLER</string>
+    <string name="successful_payment">Successful Payment</string>
+    <string name="please_press_to_close_this_page">Lütfen bu sayfayı kapatmak için basın</string>
+    <string name="networks">Ağlar</string>
+    <string name="networks_list_is_empty">Ağ Listesi boş</string>
+    <string name="actress">Aktris</string>
+    <string name="actor">Aktor</string>
+    <string name="suggest_success">Önerileriniz başarıyla gönderildi</string>
+    <string name="yobex">https://forum.bifilm.me/</string>
+    <string name="play_something">Bir Şey Oyna</string>
+    <string name="vpn_message">vpn kullanıyorsunuz devam etmek için kapatın... !</string>
+    <string name="sniffer_message">Uygulama çalışırken Herhangi Bir Sniffer Çalıştıramazsınız!</string>
+    <string name="pay_with_razorpay">RazorPay ile Öde</string>
+    <string name="pay_with_pagseguro">PagSeguro ile Öde</string>
+    <string name="by_tapping_the_button_you_agree_to_easyplex_term_amp_condition_and_privacy_policy"><![CDATA[Tıklayarak EASYPLEX Hüküm ve Koşullarını ve Gizlilik Politikasını kabul etmiş olursunuz.]]></string>
+    <string name="login_to_subscribe">Abone olabilmek için önce Giriş Yapın</string>
+    <string name="check_your_inbox">Gelen kutunu kontrol et</string>
+    <string name="resend_token">Tokeni Yeniden Gönder</string>
+    <string name="your_email_is_not_verified">E-postanız doğrulanmadı!</string>
+    <string name="verify_email_address">E-posta Adresini doğrulayın</string>
+    <string name="suggestions_is_only_for_logged_users">Öneriler yalnızca Kayıtlı kullanıcılar içindir</string>
+    <string name="popular_casters">POPÜLER AKTÖRLER</string>
+    <string name="casters">AKTÖRLER</string>
+    <string name="watch_live_streaming">Canlı Akışı İzle</string>
+    <string name="rooted_message">Uygulamayı köklü bir cihazda çalıştıramazsınız!</string>
+    <string name="download_disabled">İndirme sistemi şu anda devre dışı</string>
+    <string name="all_genres">Tüm Türlere Göre Sırala</string>
+    <string name="latest_added">Son Eklenenlere Göre Sırala</string>
+    <string name="by_rating">İMBD Puanına Göre Sırala</string>
+    <string name="by_year">Vizyon Tarihine Göre Sırala</string>
+    <string name="by_views">Görüntülemelere Göre Sırala</string>
+    <string name="cannot_extract">Video medyadan çıkarılamıyor</string>
+    <string name="ok">Tamam</string>
+    <string name="root_warning">Uygulamayı köklü bir cihazda çalıştıramazsınız!</string>
+    <string name="cannot_load_subs">Altyazılar Yüklenemiyor...</string>
+    <string name="free_episodes">Ücretsiz Bölümler</string>
+    <string name="from_your_lists">Listelerinizden?</string>
+    <string name="enable_ffmpeg_extension">FFmpeg uzantısını etkinleştir</string>
+    <string name="enable_software_codec">Yazılım Kodeğini etkinleştir</string>
+    <string name="download_location">Konuma İndir</string>
+    <string name="current_location">Mevcut konum :</string>
+    <string name="substitles_background">Altyazı Arka Planı</string>
+    <string name="reset_your_password">Parolanızı Sıfırlayın</string>
+    <string name="send_reset_token">Sıfırlama Tokeni Gönder</string>
+    <string name="msg_to_confirm">Gelen kutunuzu veya spam klasörlerinizi kontrol edin, onayı tamamladığınızda yeniden başlat\'a tıklayabilirsiniz!</string>
+
+
+
+
+
+
+
+
+
+    <string name="foreground_notification">Ön plan bildirimi</string>
+    <string name="download_running">Devam ediyorsa</string>
+    <string name="finished">Bitince</string>
+    <string name="shutdown">Kapat</string>
+    <!-- 1 d. 1 h. 1 m -->
+    <string name="elapsed_time_format_d_h_mm">%1$d gün. %2$d sa. %3$d dak.</string>
+    <!-- 1 h. 1 m. 1 s -->
+    <string name="elapsed_time_format_h_mm_ss">%1$d sa. %2$d dak. %3$d sn.</string>
+    <!-- 1 m. 1 s -->
+    <string name="elapsed_time_format_mm_ss">%1$d dak. %2$d sn.</string>
+    <!-- 1 s -->
+    <string name="elapsed_time_format_ss">%1$d s</string>
+    <string name="cancel">İptal</string>
+    <!-- A synonym for word "unmetered" - unlimited-->
+    <string name="unmetered_connections_only">Wifi Üzerinden İndir</string>
+    <string name="connect">Sunucuyu Yenile</string>
+    <string name="add">İndir</string>
+    <string name="not_available">N/A</string>
+    <string name="open_navigation_drawer">Gezinme çekmecesini aç</string>
+    <string name="close_navigation_drawer">Gezinme çekmecesini kapat</string>
+    <string name="error_template">HATA: %1$s</string>
+    <string name="pause">Duraklatıldı</string>
+    <string name="stop">Durdur</string>
+    <string name="stopped">Durduruldu</string>
+    <string name="pending">Askıda</string>
+    <string name="delete">Sil</string>
+    <string name="share">Paylaş</string>
+    <string name="menu" translatable="false">Menu</string>
+    <string name="select_all">Hepsini seç</string>
+    <string name="share_via">Şununla paylaş</string>
+    <string name="no">Hayır</string>
+    <string name="yes">Evet</string>
+    <string name="file">Dosya</string>
+    <string name="folder">Dosya</string>
+    <string name="downloading_metadata">Metadata indiriliyor</string>
+    <string name="all">Tüm</string>
+    <string name="search">Arama</string>
+    <string name="about">Hakkında</string>
+    <string name="close">Kapat</string>
+    <string name="redownload">Yeniden İndir</string>
+    <string name="Default">Varsayılan</string>
+    <string name="warning">Uyarı</string>
+    <string name="apply">Uygulamak</string>
+    <string name="report">Rapor</string>
+    <string name="more_details">Daha fazla detay</string>
+    <string name="clipboard">Pano</string>
+    <string name="verify">Doğrulamak</string>
+
+    <!-- Permission dialog -->
+    <string name="perm_denied_title">İzin reddedildi</string>
+    <string name="perm_denied_warning">Bu izin olmadan uygulama, bazı cihazlarda ve Android sürümlerinde dosyaları belleğe kaydedemez. Uygulama düzgün çalışmayacak. Bu izni reddetmek istediğinizden emin misiniz?</string>
+
+    <!-- Download progress notification -->
+    <string name="download_ticker_notify">İndiriliyor %1$s</string>
+
+    <!-- Foreground notification -->
+    <string name="app_running_in_the_background">Arka planda çalışan İndirmeler</string>
+    <string name="pause_all">Hepsini durdur</string>
+    <string name="resume_all">Tümünü devam ettir</string>
+
+    <!-- Finish notification -->
+    <string name="download_finished_notify">İndirme tamamlandı</string>
+    <string name="open_using">kullanarak aç</string>
+
+    <!-- Pending notification -->
+    <string name="download_in_queue_ticker_notify">%1$s kuyrukta</string>
+    <string name="waiting_for_network">ağ bekleniyor</string>
+    <string name="waiting_for_retry">Yeniden indirme bekleniyor</string>
+
+    <!-- Error notification -->
+    <string name="download_error_notify_title">İndirme hatası</string>
+
+    <!-- Applying params notification -->
+    <string name="applying_params_title">Parametreleri uygulama</string>
+    <string name="applying_params_for_downloads">İndirmeler için params uygulama</string>
+    <string name="applying_params_error_title">%1$s için params uygulama hatası</string>
+
+    <!-- Add download dialog -->
+    <string name="add_download">İndir</string>
+    <string name="download_link" translatable="false">Link</string>
+    <string name="download_name" translatable="false">İsim</string>
+    <string name="download_size">Video Boyutu: %1$s</string>
+    <string name="download_retry">yeniden dene</string>
+    <string name="download_advanced">İleri</string>
+    <string name="download_user_agent">Kullanıcı aracısı</string>
+    <string name="download_error_empty_link">Lütfen bağlantıyı girin</string>
+    <string name="download_error_empty_name">Lütfen adı girin</string>
+    <string name="download_error_no_enough_free_space">Yeterli boş alan yok: %1$s boş, ancak dosya boyutu %2$s</string>
+    <string name="download_error_name_is_not_correct">Doğru ad \"%1$s\"</string>
+    <string name="fetch_error_default_fmt">Hata: %1$s</string>
+    <string name="fetch_error_invalid_url">Geçersiz URL: %1$s</string>
+    <string name="fetch_error_network_disconnected">ağ bağlantısı kesildi</string>
+    <string name="fetch_error_http_response">Error: server returned HTTP %1$d code</string>
+    <string name="fetch_error_io">GÇ hatası: %1$s</string>
+    <string name="unable_to_open_folder">Seçili klasör açılamıyor. Lütfen başka bir klasör seçmeyi deneyin</string>
+    <string name="unable_to_create_file">Dosya oluşturulamıyor. Lütfen başka bir klasör seçmeyi deneyin</string>
+    <string name="partial_download_not_supported">Bu indirme, parçalara göre duraklatmayı ve indirmeyi desteklemiyor</string>
+    <string name="download_pieces_number_title">Parça sayısı</string>
+    <string name="download_description">Açıklama</string>
+    <string name="select_folder_to_save">Kaydedilecek klasörü seçin</string>
+    <string name="path">Yol</string>
+    <string name="storage_free_space">Boş alan boyutu: %1$s</string>
+    <string name="add_download_error_invalid_url">İndirme eklenemiyor: geçersiz URL</string>
+    <string name="checksum">checksum</string>
+    <string name="add_dialog_checksum_description" translatable="false">MD5, SHA-256</string>
+    <string name="referer_description">%1$s üstbilgisi</string>
+    <string name="error_invalid_checksum">Geçersiz checksum</string>
+
+    <!-- Add user agent dialog -->
+    <string name="dialog_add_user_agent_title">Kullanıcı aracısı ekle</string>
+
+    <!-- Main activity -->
+    <string name="fragment_title_queued">İndirme Kuyruğu</string>
+    <string name="fragment_title_completed">İndirilenler</string>
+    <string name="download_list_empty">indirme yok</string>
+    <string name="share_url">URL\'yi paylaş</string>
+    <string name="file_not_available">dosya mevcut değil!</string>
+    <plurals name="unable_sharing">
+        <item quantity="one">Dosya paylaşılamaz.</item>
+        <item quantity="other">Dosyalar paylaşılamaz.</item>
+    </plurals>
+    <!-- Navigation drawer -->
+    <!-- Category -->
+    <string name="drawer_category">Kategori</string>
+    <string name="drawer_category_others">Diğerleri</string>
+    <string name="drawer_category_documents">Belgeler</string>
+    <string name="drawer_category_images">Görüntüler</string>
+    <string name="drawer_category_video">Video</string>
+    <string name="drawer_category_apk">APK</string>
+    <string name="drawer_category_audio">Ses</string>
+    <string name="drawer_category_archives">Arşivler</string>
+    <!-- Status -->
+    <string name="drawer_status">Durum</string>
+    <string name="drawer_status_running">Çalısıyor</string>
+    <string name="drawer_status_stopped">durduruldu</string>
+    <!-- Date added -->
+    <string name="drawer_date_added">Ekleme Tarihi</string>
+    <string name="drawer_date_added_today">Bugün</string>
+    <string name="drawer_date_added_yesterday">Dün</string>
+    <string name="drawer_date_added_week">Hafta</string>
+    <string name="drawer_date_added_month">Ay</string>
+    <string name="drawer_date_added_year">Yıl</string>
+    <!-- Sorting -->
+    <string name="drawer_sorting">sıralama</string>
+    <string name="drawer_sorting_date_added" translatable="false">Ekleme Tarihi</string>
+    <string name="drawer_sorting_name" translatable="false">İsim</string>
+    <string name="drawer_sorting_size" translatable="false">Boy</string>
+    <string name="drawer_sorting_category" translatable="false">Kategori</string>
+    <string name="drawer_sorting_no_sorting" translatable="false">Sıralama yok</string>
+
+    <!-- Download list item -->
+
+    <!-- downloaded/total • ETA • speed -->
+    <string name="download_queued_progress_template">%1$s/%2$s \u2022 %3$s \u2022 %4$s/s</string>
+    <!-- downloaded/total • status -->
+    <string name="download_queued_template">%1$s/%2$s \u2022 %3$s</string>
+    <!-- hostname • total -->
+    <string name="download_finished_template">%1$s \u2022 %2$s</string>
+    <string name="download_details">Detaylar</string>
+    <string name="deleting">Siliniyor</string>
+    <string name="delete_selected_download">Seçilen indirme silinsin mi? Bu işlem geri alınamaz</string>
+    <string name="delete_selected_downloads">Seçilen indirmeler silinsin mi? Bu işlem geri alınamaz</string>
+    <string name="delete_with_downloaded_file">İndirilen dosyayla sil</string>
+    <string name="error_verify_checksum">Geçersiz dosya checksum</string>
+
+    <!-- Filemanager dialog -->
+    <string name="dir_chooser_title">Klasör seç</string>
+    <string name="file_chooser_title">Dosya seç</string>
+    <string name="dialog_new_folder_title">Yeni dosya</string>
+    <string name="error_dialog_new_folder">Yeni bir klasör oluşturulamıyor</string>
+    <string name="error_open_dir">klasör açılamıyor</string>
+    <string name="home_directory">Ev</string>
+    <!-- name (size) -->
+    <string name="permission_denied">İzin reddedildi</string>
+    <string name="save_file">Dosyayı kaydet</string>
+    <string name="file_name">Dosya adı</string>
+    <string name="error_file_exists" translatable="false">Dosya zaten mevcut. Değiştirin mi?</string>
+    <string name="file_name_is_empty" translatable="false">Dosya adı boş olamaz</string>
+    <string name="system_manager" translatable="false">Sistem Yöneticisi</string>
+    <string name="device_does_not_support_this_feature" translatable="false">Cihazınız bu özelliği desteklemiyor</string>
+    <string name="system_file_manager_not_found" translatable="false">Sistem dosya yöneticisi bulunamadı</string>
+    <string name="replace_file" translatable="false">Dosyayı değiştir</string>
+
+    <!-- Details download dialog -->
+    <string name="detail_downloaded" translatable="false">İndirildi</string>
+    <!-- downloaded/total (percent) -->
+    <string name="detail_downloaded_format" translatable="false">%1$s/%2$s (%3$d%%)</string>
+    <string name="detail_pieces" translatable="false">Parçalar</string>
+    <string name="detail_date_added" translatable="false">Ekleme Tarihi</string>
+    <string name="detail_user_agent" translatable="false">Kullanıcı aracısı</string>
+    <string name="detail_md5_hash_sum" translatable="false">MD5</string>
+    <string name="detail_sha256_hash_sum" translatable="false">SHA-256</string>
+    <string name="calculate" translatable="false">Hesapla</string>
+
+    <!-- Error report -->
+    <string name="app_error_occurred" translatable="false">Uygulama hatası oluştu. Raporu geliştiricilere gönderebilirsiniz</string>
+    <string name="error_comment_prompt" translatable="false">Buraya ekstra bilgi ve yorum ekleyebilirsiniz:</string>
+
+    <!-- Send text to clipboard -->
+    <string name="send_text_to_clipboard" translatable="false">kopyala</string>
+    <string name="text_copied_to_clipboard" translatable="false">Metin panoya kopyalandı</string>
+
+    <!-- Browser -->
+    <string name="browser" translatable="false">Tarayıcı</string>
+    <string name="browser_app" translatable="false">BİFilm Tarayıcı</string>
+    <string name="webview_is_required" translatable="false">Çalışmak için WebView gereklidir</string>
+    <string name="browser_forward_arrow" translatable="false">İleri</string>
+    <string name="browser_desktop_version" translatable="false">Masaüstü versiyonu</string>
+    <string name="browser_address_bar_hint" translatable="false">Adres veya sorgu girin</string>
+    <string name="browser_back_pressed" translatable="false">Kapatmak için tekrar basın</string>
+    <string name="browser_secure_connection" translatable="false">Güvenli bağlantı</string>
+    <string name="browser_download_from_link" translatable="false">İndirmek</string>
+    <string name="browser_copy_link" translatable="false">Bağlantıyı kopyala</string>
+    <!-- Browser bookmarks -->
+    <string name="browser_bookmarks" translatable="false">Yer imleri</string>
+    <string name="bookmarks_list_empty" translatable="false">Yer işareti yok</string>
+    <string name="browser_add_bookmark" translatable="false">İmi eklemek</string>
+    <string name="browser_edit_bookmark" translatable="false">Yer işaretini düzenle</string>
+    <!-- Edit bookmark dialog -->
+    <string name="browser_bookmark_name">Name</string>
+    <string name="browser_bookmark_url">URL</string>
+    <string name="browser_bookmark_error_empty_url">Please enter URL</string>
+    <string name="browser_bookmark_error_empty_name">Please enter name</string>
+    <plurals name="browser_bookmark_deleted">
+        <item quantity="one">Bookmark deleted</item>
+        <item quantity="other">Bookmarks deleted</item>
+    </plurals>
+    <plurals name="browser_bookmark_delete_failed">
+        <item quantity="one">Failed to delete bookmark</item>
+        <item quantity="other">Failed to delete bookmarks</item>
+    </plurals>
+    <string name="browser_bookmark_change_failed">Failed to change bookmark</string>
+    <string name="browser_bookmark_added">Bookmark added</string>
+    <string name="browser_bookmark_add_failed">Failed to add bookmark</string>
+    <string name="browser_bookmark_edit_menu">Düzenle</string>
+
+    <!-- Settings -->
+    <!-- Headers -->
+    <string name="pref_header_appearance">Dış görünüş</string>
+    <string name="pref_header_behavior">Davranış</string>
+    <string name="pref_header_limitations">sınırlamalar</string>
+    <string name="pref_header_storage">Depolamak</string>
+    <string name="pref_header_browser">Tarayıcı</string>
+    <!-- Appearance settings -->
+    <string name="pref_theme_category">Tema ayarları</string>
+    <string name="pref_theme_title">Tema</string>
+    <string-array name="pref_theme_entries">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Black</item>
+    </string-array>
+    <string name="pref_notification_category">Bildirim ayarları</string>
+    <string name="pref_progress_notify_title" translatable="false">İlerleme bildirimi</string>
+    <string name="pref_finish_notify_title" translatable="false">Bildirimi bitir</string>
+    <string name="pref_pending_notify_title" translatable="false">Bekleyen bildirim</string>
+    <string name="pref_play_sound_notify_title" translatable="false">Sesi Oynat</string>
+    <string name="pref_notify_sound_title" translatable="false">Bilgilendirme sesi</string>
+    <string name="pref_led_indicator_notify_title" translatable="false">LED göstergesi</string>
+    <string name="pref_led_indicator_color_notify_title" translatable="false">LED gösterge rengi</string>
+    <string name="pref_vibration_notify_title" translatable="false">Titreşim</string>
+    <string name="theme_settings_apply_after_reboot" translatable="false">Uygulamayı yeniden başlattıktan sonra tema ayarları uygulanacaktır</string>
+    <!-- Behavior settings -->
+    <string name="pref_autostart_title" translatable="false">Otomatik başlatma</string>
+    <string name="pref_autostart_summary" translatable="false">Cihazı başlattıktan sonra uygulamayı çalıştırın ve manuel olarak duraklatılmamışlarsa indirmeleri başlatın</string>
+    <!-- A synonym for word "unmetered" - unlimited-->
+    <string name="pref_umnetered_connections_only_title" translatable="false">Sadece Wifi bağlantısıyla</string>
+    <string name="pref_umnetered_connections_only_summary" translatable="false">Yalnızca üçretsiz bağlantılar üzerinden indirin (örneğin, Wifi )</string>
+    <string name="pref_power_management_category" translatable="false">Güç yönetimi</string>
+    <string name="pref_cpu_do_not_sleep_title" translatable="false">CPU yu uyanık tutun</string>
+    <string name="pref_cpu_do_not_sleep_summary" translatable="false">Bunu etkinleştirmek pil kullanımını artıracaktır. Ekran kapandığında indirme hızı düşerse bu seçeneği kullanın</string>
+    <string name="pref_download_only_when_charging_title" translatable="false">Yalnızca şarj olurken indirin</string>
+    <string name="pref_download_only_when_charging_summary" translatable="false">Etkinleştirilirse, indirme yalnızca şarj sırasında gerçekleşir. Şarj cihazına bağlı olmadığında tüm indirmeler duraklatılacak</string>
+    <string name="pref_battery_control_title" translatable="false">Pil kontrolü</string>
+    <string name="pref_custom_battery_control_title" translatable="false">Özel pil yüzdesi</string>
+    <string name="pref_custom_battery_control_value_title" translatable="false">Pil kontrol yüzdesi</string>
+    <string name="pref_battery_control_summary" translatable="false">Pil seviyesi %1$d%% nin altına düşerse tüm indirmeler duraklatılacak. Limit, şarj sırasında geçerli değildir</string>
+    <string name="pref_custom_battery_control_summary" translatable="false">Pil belirtilen eşiğin altına düşerse indirmeleri duraklatmak için özel bir yüzde ayarlayın. Bunu etkinleştirmek, varsayılan %1$d%% eşiğini yok sayar</string>
+    <string name="pref_custom_battery_control_dialog_summary" translatable="false">Uygulamanın izlemesi için özel bir pil yüzdesi ayarlamak, indirmeler yapılırken pil ömrü üzerinde olumsuz bir etkiye sahip olacaktır. Bunu etkinleştirmek istediğinizden emin misiniz?</string>
+    <string name="pref_enable_roaming_title" translatable="false">Dolaşımı etkinleştir</string>
+    <string name="pref_enable_roaming_summary" translatable="false">Yalnızca cihaz dolaşımda değilse indirin</string>
+    <string name="pref_replace_duplicate_downloads_title" translatable="false">Yinelenen indirmeleri değiştirin</string>
+    <string name="pref_replace_duplicate_downloads_summary" translatable="false">Zaten listede olan eklendiğinde yinelenen indirmeleri (aynı URL ile) değiştirin</string>
+    <string name="pref_auto_connect_title" translatable="false">Otomatik bağlantı</string>
+    <string name="pref_auto_connect_summary" translatable="false">Ekle iletişim kutusunu açarken otomatik bağlan</string>
+    <string name="pref_timeout_title" translatable="false">Zaman aşımı</string>
+    <string name="pref_timeout_summary" translatable="false">Bağlantı zaman aşımına uğramadan önce beklenecek milisaniye sayısı. Sıfır, sonsuz bir zaman aşımı olarak yorumlanır</string>
+    <!-- Limitation settings -->
+    <string name="pref_max_active_downloads_title" translatable="false">Maksimum etkin indirme</string>
+    <string name="pref_max_download_retries_title" translatable="false">Maksimum indirme denemesi sayısı</string>
+    <string name="pref_max_download_retries_dialog_msg" translatable="false">0 - yeniden deneme olmadan</string>
+    <string name="pref_speed_limit_title" translatable="false">Tek parça için hız sınırı</string>
+    <string name="pref_speed_limit_dialog_hint" translatable="false">Hızı KiB/s olarak ayarlayın (0 - sınırsız)</string>
+    <!-- Storage settings -->
+    <string name="pref_save_downloads_in_title" translatable="false">İndirilenleri şuraya kaydet</string>
+    <string name="pref_move_after_download_title" translatable="false">İndirdikten sonra taşı</string>
+    <string name="pref_move_after_download_in_title" translatable="false">İndirdikten sonra taşı</string>
+    <string name="pref_delete_file_if_error_title" translatable="false">Bir hata oluşursa dosyayı silin</string>
+    <string name="pref_preallocate_disk_space_title" translatable="false">Dosya için önceden disk alanı ayırın</string>
+    <string name="pref_preallocate_disk_space_summary" translatable="false">Android 5.0 Lollipop ve üzeri için kullanılabilir</string>
+
+
+    <!-- Browser settings -->
+    <string name="pref_browser_bottom_address_bar_title" translatable="false">Address bar at the bottom</string>
+    <string name="pref_browser_bottom_address_bar_summary" translatable="false">The address bar will be located at the bottom of the screen</string>
+    <string name="pref_browser_start_page_title" translatable="false">Start page</string>
+    <string name="pref_browser_allow_java_script_title" translatable="false">Allow Java Script</string>
+    <string name="pref_browser_allow_popup_windows_title" translatable="false">Allow popup windows</string>
+    <string name="pref_browser_cache_category" translatable="false">Cache</string>
+    <string name="pref_browser_cookies_category" translatable="false">Cookies</string>
+    <string name="pref_browser_enable_caching_title" translatable="false">Enable caching</string>
+    <string name="pref_browser_enable_cookies_title" translatable="false">Enable cookies</string>
+    <string name="pref_browser_delete_cookies_title" translatable="false">Delete cookies</string>
+    <string name="pref_browser_delete_cookies_done" translatable="false">Deleted all the cookies</string>
+    <string name="pref_browser_clear_cache_title" translatable="false">Clear cache</string>
+    <string name="pref_browser_clear_cache_done" translatable="false">The cache is cleared</string>
+    <string name="pref_browser_do_not_track_title" translatable="false">Do Not Track</string>
+    <string name="pref_browser_do_not_track_summary" translatable="false">Send a “Do Not Track” request to websites you visit</string>
+    <string name="pref_browser_launcher_icon_title" translatable="false">Browser icon in the launcher</string>
+    <string name="pref_browser_disable_from_system_title" translatable="false">Disable browser from the system</string>
+    <string name="pref_browser_disable_from_system_summary" translatable="false">Browser will not be available for opening links</string>
+    <string name="pref_browser_search_engine_title" translatable="false">Search engine</string>
+    <string name="pref_browser_hide_menu_icon_title" translatable="false">Hide icon from menu</string>
+    <string name="pref_browser_hide_menu_icon_summary" translatable="false">Hide browser icon from the main screen menu</string>
+
+    <!-- About dialog -->
+    <string name="about_title">EASYPLEX İndirme Hakkında</string>
+    <string name="about_description" translatable="false" />
+    <string name="about_changelog" translatable="false">Değişiklik günlüğü</string>
+
+
+    <string name="referer" translatable="false">HTTP Referer</string>
+    <!-- Settings -->
+    <!-- Appearance settings -->
+    <string name="pref_theme_light_value" translatable="false">0</string>
+    <string name="pref_theme_dark_value" translatable="false">1</string>
+    <string name="pref_theme_black_value" translatable="false">2</string>
+    <string-array name="pref_theme_entries_value" translatable="false">
+        <item>@string/pref_theme_light_value</item>
+        <item>@string/pref_theme_dark_value</item>
+        <item>@string/pref_theme_black_value</item>
+    </string-array>
+
+
+    <string name="search_results">\"Arama Sonuçları \"</string>
+    <string name="exit_the_app">Uygulamadan çıkmak için tekrar basın</string>
+    <string name="access_code">Yanlış Erişim Kodu</string>
+    <string name="completed_download_message_fragment">Sizin için indirdiğimiz dizileri ve filmleri burada göreceksiniz. Ne indirdiğinizi görmek için daha sonra tekrar kontrol edin</string>
+    <string name="queue_download_message_fragment">İndirme kuyruğunda  indirmek üzeri olan diziler ve filmleri burada görebilirsiniz. Biraz indirme kuyruğuna içerik eklemeye çalışın…</string>
+    <string name="queue_is_empty">İndirilen İçerik Yok !</string>
+    <string name="completed_is_empty">İndirilmiş içerik yok</string>
+    <string name="non_verified">- Doğrulanmadı</string>
+    <string name="verified">- Doğrulandı</string>
+    <string name="rest_confirmation_mail">\"gönderilen onay e-postasını sıfırla \"</string>
+    <string name="episode">Bölüm</string>
+    <string name="select_item">Seç</string>
+    <string name="remove_watch_list">Removed From Watchlist</string>
+    <string name="main_player">Main Player</string>
+    <string name="vlc">VLC</string>
+    <string name="mx_player">MX PLAYER</string>
+    <string name="web_video_caster">Web Video Caster</string>
+    <string name="comments">COMMENTS</string>
+    <string name="report_sent">Your report has been submitted successfully</string>
+    <string name="screen_locked">Screen Locked</string>
+    <string name="tap_to_unlock">Tap to Unlock</string>
+    <string name="unlock_control">Unlock Control ?</string>
+    <string name="lock">Lock</string>
+    <string name="how_to_get_the_code">How to get the code ?</string>
+    <string name="using_1dm">USING 1DM</string>
+    <string name="using_adm">USING ADM</string>
+    <string name="using_app">USING APP</string>
+    <string name="genres_lists_empty">Unable to Get Genres Lists</string>
+    <string name="substitles_empty">No Substitles Found for this media</string>
+    <string name="play_with_web_video_caster">Play with Web Video Caster</string>
+    <string name="comment_sent">Comment added successfully</string>
+    <string name="trailer_not_found">No Trailer Found</string>
+    <string name="login_to_comment">You need to login to able to add a comment !</string>
+    <string name="current_default_lang2">Current Default Language : %s</string>
+    <string name="default_langs_substitles">Default Subtitle Langs..</string>
+    <string name="comments_size">\" Comments\"</string>
+    <string name="comment_not_deleted">could not be deleted</string>
+    <string name="comment_deleted">Successfully deleted</string>
+    <string name="type_comment">Type a word to able to comment !</string>
+    <string name="delete_user">Unable to delete your account !</string>
+    <string name="app_versions">"Version : "</string>
+    <string name="added_mylist">\"Added: \"</string>
+    <string name="removed_mylist">\"Removed: \"</string>
+    <string name="rewards_ads_not_ready">The rewarded ad wasn\'t ready yet</string>
+    <string name="who_s_watching">Who\'s Watching ?</string>
+    <string name="rating_sent">Review has been sent Successfully</string>
+    <string name="review_sent">Review has been sent successfully</string>
+    <string name="review_require_login">Login is required to be able to rate!</string>
+    <string name="upload_avatar">Upload Avatar</string>
+    <string name="enter">Enter</string>
+    <string name="get_password">Get Password</string>
+    <string name="search_on_youtube">Search on YouTube</string>
+    <string name="no_trailer_has_been_found_click_below_to_search_on_youtube">No Trailer has been found , click below to search on youtube</string>
+    <string name="failed_to_load_required_informations_client_id_is_not_valid">Failed to load required informations , Client ID is not valid</string>
+    <string name="the_rewarded_ad_wasn_t_loaded_yet_or_completed">The rewarded ad wasn\'t loaded yet or Completed</string>
+    <string name="type_to_comment">Type a word to able to comment !</string>
+    <string name="please_uninstall_your_sniffer_to_be_able_to_use_the_app">Please Uninstall Your Sniffer to be able to use the app !</string>
+    <string name="added_to_watchlist">Added To Watchlist</string>
+    <string name="story">Story</string>
+    <string name="caracters">Caracters</string>
+    <string name="animation">Animation</string>
+    <string name="music">Music</string>
+    <string name="submit">Submit</string>
+    <string name="send">Send</string>
+    <string name="checking_your_login_info">Checking Your Login Info....</string>
+    <string name="biography">Biography</string>
+    <string name="place">place</string>
+    <string name="profile_updated">\"Your profile has been updated successfully ! \"</string>
+    <string name="profile_update_error">\"Your profile is not  updated ! \"</string>
+    <string name="countdown_wait">You Must wait until the countdown finish before sending the confirmation code again</string>
+    <string name="phone_is_empty">Please fill the phone number</string>
+    <string name="quota_exceeded">The SMS quota for the project has been exceeded</string>
+    <string name="invalid_request">Invalid request</string>
+    <string name="sms_sent">The SMS verification code has been sent to the provided phone number</string>
+    <string name="profile_limit">you cannot create more than 5 profiles on the same account</string>
+    <string name="profile_added">Profile Added Successfully</string>
+    <string name="error_occured">An error has been occurred</string>
+    <string name="profile_name_placeholder">Profile Name...</string>
+    <string name="choose_season">Choose a season</string>
+    <string name="choose">Choose</string>
+    <string name="comment_size_views">"Comments : "</string>
+    <string name="stream_is_currently_not_available_for_this_media">Stream is currently not available for this Media</string>
+    <string name="download_is_currently_not_available_for_this_media">Download is currently not available for this Media</string>
+    <string name="maximum_devices_allowed_is">Maximum Devices Allowed is :</string>
+    <string name="verify_account">Verify Account</string>
+    <string name="devices_management">Devices Management</string>
+
+
+</resources>
