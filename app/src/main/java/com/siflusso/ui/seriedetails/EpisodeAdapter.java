@@ -2,16 +2,15 @@ package com.siflusso.ui.seriedetails;
 
 import static android.view.View.GONE;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF;
 import static com.siflusso.util.Constants.ARG_MOVIE;
 import static com.siflusso.util.Constants.DEFAULT_WEBVIEW_ADS_RUNNING;
 import static com.siflusso.util.Constants.E;
-import static com.siflusso.util.Constants.ENABLE_LEFT_NAVBAR;
 import static com.siflusso.util.Constants.PLAYER_HEADER;
 import static com.siflusso.util.Constants.PLAYER_USER_AGENT;
 import static com.siflusso.util.Constants.S0;
 import static com.siflusso.util.Constants.SEASONS;
 import static com.siflusso.util.Constants.SERVER_BASE_URL;
-import static com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -25,6 +24,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -36,7 +36,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -67,6 +66,27 @@ import com.appodeal.ads.RewardedVideoCallbacks;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.easyplex.easyplexsupportedhosts.EasyPlexSupportedHosts;
 import com.easyplex.easyplexsupportedhosts.Model.EasyPlexSupportedHostsModel;
+import com.facebook.ads.AdError;
+import com.facebook.ads.InterstitialAdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.rewarded.RewardedAd;
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaQueueItem;
+import com.google.android.gms.cast.MediaTrack;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+import com.google.android.gms.common.images.WebImage;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ironsource.mediationsdk.IronSource;
+import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
+import com.ironsource.mediationsdk.logger.IronSourceError;
+import com.ironsource.mediationsdk.model.Placement;
+import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener;
 import com.siflusso.R;
 import com.siflusso.data.local.entity.Download;
 import com.siflusso.data.local.entity.History;
@@ -104,27 +124,6 @@ import com.siflusso.util.DialogHelper;
 import com.siflusso.util.GlideApp;
 import com.siflusso.util.SpacingItemDecoration;
 import com.siflusso.util.Tools;
-import com.facebook.ads.AdError;
-import com.facebook.ads.InterstitialAdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
-import com.google.android.gms.cast.MediaInfo;
-import com.google.android.gms.cast.MediaMetadata;
-import com.google.android.gms.cast.MediaQueueItem;
-import com.google.android.gms.cast.MediaTrack;
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
-import com.google.android.gms.cast.framework.media.RemoteMediaClient;
-import com.google.android.gms.common.images.WebImage;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ironsource.mediationsdk.IronSource;
-import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
-import com.ironsource.mediationsdk.logger.IronSourceError;
-import com.ironsource.mediationsdk.model.Placement;
-import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener;
 import com.unity3d.ads.IUnityAdsLoadListener;
 import com.unity3d.ads.IUnityAdsShowListener;
 import com.unity3d.ads.UnityAds;
@@ -137,7 +136,6 @@ import com.vungle.warren.error.VungleException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -222,7 +220,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
     @SuppressLint("NotifyDataSetChanged")
     public void addSeasons(List<Episode> episodeList) {
-
         this.episodeList = episodeList;
         notifyDataSetChanged();
     }
@@ -232,7 +229,25 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
     public EpisodeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         RowSeasonsBinding binding = RowSeasonsBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-
+//        binding.planetsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+//                episode = episodeList.get(position);
+//                Season season = (Season) adapterView.getItemAtPosition(position);
+//                String episodeId = String.valueOf(season.getId());
+//                String currentSeason = season.getName();
+//                Log.d(Constants.TAG, "onItemSelected: called" + currentSeason);
+////                Toast.makeText(context, "Season" + currentSeason, Toast.LENGTH_SHORT).show();
+//                notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//                // do nothing if no season selected
+//
+//            }
+//        });
         return new EpisodeViewHolder(binding);
     }
 
@@ -266,47 +281,47 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         @SuppressLint({"SetTextI18n", "RestrictedApi"})
         void onBind(final int position) {
             episode = episodeList.get(position);
-            if(position==0){
-                binding.planetsSpinner.setItem(season);
-                binding.planetsSpinner.setSelection(0);
-                binding.planetsSpinner.setVisibility(View.VISIBLE);
-                binding.planetsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-
-                        episode = episodeList.get(position);
-                        Season season = (Season) adapterView.getItemAtPosition(position);
-                        String episodeId = String.valueOf(season.getId());
-                        String currentSeason = season.getName();
-//                        addSeasons(season.getEpisodes());
-                        Toast.makeText(context, "Season"+currentSeason, Toast.LENGTH_SHORT).show();
+            if (position == 0) {
+//                binding.planetsSpinner.setItem(season);
+//                binding.planetsSpinner.setSelection(0);
+//                binding.planetsSpinner.setVisibility(View.VISIBLE);
+//                binding.planetsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                    @Override
+//                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+//
+//                        episode = episodeList.get(position);
+//                        Season season = (Season) adapterView.getItemAtPosition(position);
+//                        String episodeId = String.valueOf(season.getId());
+//                        String currentSeason = season.getName();
+////                        addSeasons(season.getEpisodes());
+//                        Toast.makeText(context, "Season"+currentSeason, Toast.LENGTH_SHORT).show();
 //                        notifyDataSetChanged();
-
-
-//                        notifyItemChanged(position);
-
 //
 //
-
-//                    mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
-//                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail);
+////                        notifyItemChanged(position);
 //
-
-//                    serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
-
-
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                        // do nothing if no season selected
-
-                    }
-                });
+////
+////
+//
+////                    mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
+////                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail);
+////
+//
+////                    serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//                        // do nothing if no season selected
+//
+//                    }
+//                });
             }
             else {
-                binding.planetsSpinner.setVisibility(GONE);
+//                binding.planetsSpinner.setVisibility(GONE);
             }
 
             if (episode.getStillPath() == null) {
@@ -397,6 +412,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         private boolean episodeMiniMenuClicked(MenuItem item, Episode episode, int position) {
             switch (item.getItemId()) {
                 case R.id.play_menu:
+                    Log.d(Constants.TAG, "episodeMiniMenuClicked: " + episode.getEpisodeNumber() + " - " + episode.getName());
                     onClickMoreOptionsIconsDot(episode, position);
                     break;
                 case R.id.report_menu:

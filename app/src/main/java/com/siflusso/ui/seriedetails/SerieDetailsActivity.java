@@ -47,6 +47,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -73,51 +74,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.easyplex.easyplexsupportedhosts.EasyPlexSupportedHosts;
 import com.easyplex.easyplexsupportedhosts.Model.EasyPlexSupportedHostsModel;
-import com.siflusso.R;
-import com.siflusso.data.local.entity.History;
-import com.siflusso.data.local.entity.Media;
-import com.siflusso.data.local.entity.Series;
-import com.siflusso.data.model.MovieResponse;
-import com.siflusso.data.model.auth.Rating;
-import com.siflusso.data.model.comments.Comment;
-import com.siflusso.data.model.episode.Episode;
-import com.siflusso.data.model.genres.Genre;
-import com.siflusso.data.model.media.MediaModel;
-import com.siflusso.data.model.media.Resume;
-import com.siflusso.data.model.media.StatusFav;
-import com.siflusso.data.model.serie.Season;
-import com.siflusso.data.repository.AuthRepository;
-import com.siflusso.data.repository.MediaRepository;
-import com.siflusso.data.repository.SettingsRepository;
-import com.siflusso.databinding.SerieDetailsBinding;
-import com.siflusso.ui.comments.CommentsAdapter;
-import com.siflusso.ui.manager.AuthManager;
-import com.siflusso.ui.manager.SettingsManager;
-import com.siflusso.ui.manager.TokenManager;
-import com.siflusso.ui.moviedetails.adapters.CastAdapter;
-import com.siflusso.ui.moviedetails.adapters.CustomAdapter;
-import com.siflusso.ui.moviedetails.adapters.MovieCastAdapter;
-import com.siflusso.ui.moviedetails.adapters.OverviewAdapter;
-import com.siflusso.ui.moviedetails.adapters.RelatedsTabAdapter;
-import com.siflusso.ui.moviedetails.model.OverviewModel;
-import com.siflusso.ui.player.activities.EasyPlexMainPlayer;
-import com.siflusso.ui.player.activities.EasyPlexPlayerActivity;
-import com.siflusso.ui.player.activities.EmbedActivity;
-import com.siflusso.ui.player.cast.ExpandedControlsActivity;
-import com.siflusso.ui.player.cast.queue.QueueDataProvider;
-import com.siflusso.ui.player.cast.queue.ui.QueueListViewActivity;
-import com.siflusso.ui.player.cast.settings.CastPreference;
-import com.siflusso.ui.player.cast.utils.Utils;
-import com.siflusso.ui.player.fsm.state_machine.FsmPlayerApi;
-import com.siflusso.ui.settings.SettingsActivity;
-import com.siflusso.ui.viewmodels.LoginViewModel;
-import com.siflusso.ui.viewmodels.SerieDetailViewModel;
-import com.siflusso.util.Constants;
-import com.siflusso.util.DialogHelper;
-import com.siflusso.util.GlideApp;
-import com.siflusso.util.NetworkUtils;
-import com.siflusso.util.SpacingItemDecoration;
-import com.siflusso.util.Tools;
 import com.facebook.ads.AdError;
 import com.facebook.ads.InterstitialAdListener;
 import com.facebook.ads.MediaView;
@@ -151,6 +107,50 @@ import com.ironsource.mediationsdk.logger.IronSourceError;
 import com.ironsource.mediationsdk.model.Placement;
 import com.ironsource.mediationsdk.sdk.BannerListener;
 import com.ironsource.mediationsdk.sdk.RewardedVideoListener;
+import com.siflusso.R;
+import com.siflusso.data.local.entity.History;
+import com.siflusso.data.local.entity.Media;
+import com.siflusso.data.local.entity.Series;
+import com.siflusso.data.model.MovieResponse;
+import com.siflusso.data.model.auth.Rating;
+import com.siflusso.data.model.comments.Comment;
+import com.siflusso.data.model.episode.Episode;
+import com.siflusso.data.model.genres.Genre;
+import com.siflusso.data.model.media.MediaModel;
+import com.siflusso.data.model.media.Resume;
+import com.siflusso.data.model.media.StatusFav;
+import com.siflusso.data.model.serie.Season;
+import com.siflusso.data.repository.AuthRepository;
+import com.siflusso.data.repository.MediaRepository;
+import com.siflusso.data.repository.SettingsRepository;
+import com.siflusso.databinding.SerieDetailsBinding;
+import com.siflusso.ui.comments.CommentsAdapter;
+import com.siflusso.ui.manager.AuthManager;
+import com.siflusso.ui.manager.SettingsManager;
+import com.siflusso.ui.manager.TokenManager;
+import com.siflusso.ui.moviedetails.adapters.CastAdapter;
+import com.siflusso.ui.moviedetails.adapters.CustomAdapter;
+import com.siflusso.ui.moviedetails.adapters.MovieCastAdapter;
+import com.siflusso.ui.moviedetails.adapters.OverviewAdapter;
+import com.siflusso.ui.moviedetails.model.OverviewModel;
+import com.siflusso.ui.player.activities.EasyPlexMainPlayer;
+import com.siflusso.ui.player.activities.EasyPlexPlayerActivity;
+import com.siflusso.ui.player.activities.EmbedActivity;
+import com.siflusso.ui.player.cast.ExpandedControlsActivity;
+import com.siflusso.ui.player.cast.queue.QueueDataProvider;
+import com.siflusso.ui.player.cast.queue.ui.QueueListViewActivity;
+import com.siflusso.ui.player.cast.settings.CastPreference;
+import com.siflusso.ui.player.cast.utils.Utils;
+import com.siflusso.ui.player.fsm.state_machine.FsmPlayerApi;
+import com.siflusso.ui.settings.SettingsActivity;
+import com.siflusso.ui.viewmodels.LoginViewModel;
+import com.siflusso.ui.viewmodels.SerieDetailViewModel;
+import com.siflusso.util.Constants;
+import com.siflusso.util.DialogHelper;
+import com.siflusso.util.GlideApp;
+import com.siflusso.util.NetworkUtils;
+import com.siflusso.util.SpacingItemDecoration;
+import com.siflusso.util.Tools;
 import com.unity3d.ads.IUnityAdsLoadListener;
 import com.unity3d.ads.IUnityAdsShowListener;
 import com.unity3d.ads.UnityAds;
@@ -222,7 +222,6 @@ public class SerieDetailsActivity extends AppCompatActivity {
     private String mediaGenre;
     public static final String ARG_MOVIE = "movie";
     SerieDetailsBinding serieDetailsBinding;
-
 
     @Inject
     @Named("vpn")
@@ -302,9 +301,12 @@ public class SerieDetailsActivity extends AppCompatActivity {
     private boolean internal = false;
     CastAdapter mCastSerieAdapter;
     EpisodeAdapter mEpisodesSerieAdapter;
+
+    ConcatAdapter concatAdapter;
+    EpisodeDropdownAdapter episodeDropdownAdapter;
     private boolean mSerieLoaded;
     private boolean mEpisodesLoaded;
-    private  Media serie;
+    private Media serie;
     private Series series;
     private CastContext mCastContext;
     private final SessionManagerListener<CastSession> mSessionManagerListener =
@@ -1573,7 +1575,8 @@ public class SerieDetailsActivity extends AppCompatActivity {
         OverviewAdapter adapter3 = new OverviewAdapter(this,model);
         recyclerViews.add(createRecyclerView(adapter1));
         recyclerViews.add(createRecyclerView(adapter3));
-        recyclerViews.add(createRecyclerView(mEpisodesSerieAdapter));
+//        recyclerViews.add(createRecyclerView(mEpisodesSerieAdapter));
+        recyclerViews.add(createRecyclerView(concatAdapter));
         pagerAdapter = new CustomAdapter(recyclerViews);
         serieDetailsBinding.tabLayout.setupWithViewPager(serieDetailsBinding.viewPager);
         serieDetailsBinding.viewPager.setAdapter(pagerAdapter);
@@ -3017,17 +3020,39 @@ public class SerieDetailsActivity extends AppCompatActivity {
             String episodeId = String.valueOf(season.getId());
             String currentSeason = season.getName();
             String seasonNumber = season.getSeasonNumber();
-            Toast.makeText(this, "Season epsodoe Length"+season.getEpisodes().size(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "Serial Details "+serieDetail.getName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Season epsodoe Length" + season.getEpisodes().size(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Serial Details " + serieDetail.getName(), Toast.LENGTH_SHORT).show();
             serieDetailsBinding.recyclerViewEpisodes.setLayoutManager(new LinearLayoutManager(SerieDetailsActivity.this));
-                    serieDetailsBinding.recyclerViewEpisodes.setHasFixedSize(true);
+            serieDetailsBinding.recyclerViewEpisodes.setHasFixedSize(true);
 
-            mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
-                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail,spinnerItems);
+            concatAdapter = new ConcatAdapter();
+            mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(), seasonNumber, episodeId, currentSeason, sharedPreferences, authManager, settingsManager, mediaRepository
+                    , serieDetail.getName(), serieDetail.getPremuim(), tokenManager, SerieDetailsActivity.this, serieDetail.getPosterPath(), serie, mediaGenre, externalId, serieDetail, spinnerItems);
+            episodeDropdownAdapter = new EpisodeDropdownAdapter(serieDetail.getSeasons());
 
+            episodeDropdownAdapter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(SerieDetailsActivity.this, "Selected " + position, Toast.LENGTH_SHORT).show();
+                    Season season = (Season) parent.getItemAtPosition(position);
+                    String episodeId = String.valueOf(season.getId());
+                    String currentSeason = season.getName();
+                    String seasonNumber = season.getSeasonNumber();
                     mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
-                    serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
+                }
 
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            concatAdapter.addAdapter(episodeDropdownAdapter);
+            concatAdapter.addAdapter(mEpisodesSerieAdapter);
+
+            mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
+//            serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
+            serieDetailsBinding.recyclerViewEpisodes.setAdapter(concatAdapter);
 
             /////////  OLD /////
             serieDetailsBinding.mseason.setText(SEASONS + serieDetail.getSeasons().size());
@@ -3035,41 +3060,40 @@ public class SerieDetailsActivity extends AppCompatActivity {
             serieDetailsBinding.planetsSpinner.setSelection(0);
 
 
-
-            serieDetailsBinding.planetsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-
-                    mEpisodesLoaded = true;
-                    checkAllDataLoaded();
-
-                    if(!settingReady)finishAffinity();
-
-                    Season season = (Season) adapterView.getItemAtPosition(position);
-                    String episodeId = String.valueOf(season.getId());
-                    String currentSeason = season.getName();
-                    String seasonNumber = season.getSeasonNumber();
-
-                    // Episodes RecycleView
-                    serieDetailsBinding.recyclerViewEpisodes.setLayoutManager(new LinearLayoutManager(SerieDetailsActivity.this));
-                    serieDetailsBinding.recyclerViewEpisodes.setHasFixedSize(true);
-
-                    mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
-                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail,spinnerItems);
-
-                    mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
-                    serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
-
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                    // do nothing if no season selected
-
-                }
-            });
+//            serieDetailsBinding.planetsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                @Override
+//                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+//
+//                    mEpisodesLoaded = true;
+//                    checkAllDataLoaded();
+//
+//                    if(!settingReady)finishAffinity();
+//
+//                    Season season = (Season) adapterView.getItemAtPosition(position);
+//                    String episodeId = String.valueOf(season.getId());
+//                    String currentSeason = season.getName();
+//                    String seasonNumber = season.getSeasonNumber();
+//
+//                    // Episodes RecycleView
+//                    serieDetailsBinding.recyclerViewEpisodes.setLayoutManager(new LinearLayoutManager(SerieDetailsActivity.this));
+//                    serieDetailsBinding.recyclerViewEpisodes.setHasFixedSize(true);
+//
+//                    mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
+//                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail,spinnerItems);
+//
+//                    mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
+//                    serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
+//
+//
+//                }
+//
+//                @Override
+//                public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//                    // do nothing if no season selected
+//
+//                }
+//            });
 
         }
 

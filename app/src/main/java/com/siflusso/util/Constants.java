@@ -21,6 +21,8 @@ public abstract class Constants {
     }
 
     //
+    public static final String TAG = "faizan";
+
     public static final String SERVER_FIREBASE_VALUE = "main_api";
 //    public static final String SERVER_FIREBASE_VALUE = "https://siflusso.com/panel/public/api/";
 
