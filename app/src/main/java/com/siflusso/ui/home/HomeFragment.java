@@ -90,6 +90,7 @@ import com.siflusso.ui.manager.AuthManager;
 import com.siflusso.ui.manager.SettingsManager;
 import com.siflusso.ui.manager.StatusManager;
 import com.siflusso.ui.manager.TokenManager;
+import com.siflusso.ui.more.MoreFragment;
 import com.siflusso.ui.mylist.ListFragment;
 import com.siflusso.ui.networks.NetworksAdapter;
 import com.siflusso.ui.plans.PlansAdapter;
@@ -694,19 +695,12 @@ public class HomeFragment extends Fragment implements Injectable {
 
 
                 }
-
             });
-
-
             checkAllDataLoaded();
-
-
         }
-
-        binding.toolbar.settings.setOnClickListener(v -> requireActivity().startActivity(new Intent(requireActivity(), SettingsActivity.class)));
+//        binding.toolbar.settings.setOnClickListener(v -> requireActivity().startActivity(new Intent(requireActivity(), SettingsActivity.class)));
+        binding.toolbar.settings.setOnClickListener(v -> ((BaseActivity) requireActivity()).changeFragmentWithID());
         binding.toolbar.userProfile.setOnClickListener(v -> {
-
-
             if (settingsManager.getSettings().getProfileSelection() == 1){
 
                 requireActivity().startActivity(new Intent(requireActivity(), UserProfiles.class));
@@ -1597,241 +1591,245 @@ public class HomeFragment extends Fragment implements Injectable {
     private void initNavigationMenu() {
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(requireActivity(), binding.drawerLayout, binding.toolbar.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {};
-        binding.drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        binding.navView.setNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_aboutus) {
-                final Dialog aboutusDialog = new Dialog(requireActivity());
-                aboutusDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-                aboutusDialog.setContentView(R.layout.dialog_about);
-                aboutusDialog.setCancelable(true);
-                aboutusDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                ImageView imageView = aboutusDialog.findViewById(R.id.logo_aboutus);
-                TextView textView = aboutusDialog.findViewById(R.id.app_version);
-
-                if (settingsManager.getSettings().getLatestVersion() !=null && !settingsManager.getSettings().getLatestVersion().isEmpty()){
-                    textView.setText(getString(R.string.app_versions) + settingsManager.getSettings().getLatestVersion());
-                }else {
-
-                    String versionName = Utils.getAppVersionName(requireActivity());
-                    textView.setText(getString(R.string.app_versions) + versionName);
-                }
-
-                Tools.loadMainLogo(requireActivity(), imageView);
-                WindowManager.LayoutParams layoutParams2 = new WindowManager.LayoutParams();
-                layoutParams2.copyFrom(aboutusDialog.getWindow().getAttributes());
-                layoutParams2.width = WRAP_CONTENT;
-                layoutParams2.height = WRAP_CONTENT;
-
-                aboutusDialog.findViewById(R.id.bt_getcode).setOnClickListener(v15 -> {
-                    if (settingsManager.getSettings().getAppUrlAndroid().isEmpty()) {
-
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.yobex))));
-
-                    } else {
-
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(settingsManager.getSettings().getAppUrlAndroid())));
-
-                    }
-
-                });
-
-                aboutusDialog.findViewById(R.id.bt_close).setOnClickListener(v14 -> aboutusDialog.dismiss());
-
-                aboutusDialog.findViewById(R.id.app_url).setOnClickListener(v13 -> {
-
-
-                    if (settingsManager.getSettings().getAppUrlAndroid() != null && !settingsManager.getSettings().getAppUrlAndroid().trim().isEmpty()) {
-
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(settingsManager.getSettings().getAppUrlAndroid())));
-
-
-                    } else {
-
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.yobex))));
-
-                    }
-
-                });
-
-                aboutusDialog.show();
-                aboutusDialog.getWindow().setAttributes(layoutParams2);
-            } else if (id == R.id.nav_suggestions) {
-                if (settingsManager.getSettings().getSuggestAuth() == 1) {
-
-                    if (tokenManager.getToken().getAccessToken() != null) {
-
-
-                        final Dialog suggestion = new Dialog(requireActivity());
-                        suggestion.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        suggestion.setContentView(R.layout.dialog_suggest);
-                        suggestion.setCancelable(false);
-                        suggestion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                        WindowManager.LayoutParams lps = new WindowManager.LayoutParams();
-                        lps.copyFrom(suggestion.getWindow().getAttributes());
-
-                        lps.gravity = Gravity.BOTTOM;
-                        lps.width = MATCH_PARENT;
-                        lps.height = MATCH_PARENT;
-
-                        suggestion.show();
-                        suggestion.getWindow().setAttributes(lps);
-
-                        EditText editTextMessage = suggestion.findViewById(R.id.et_post);
-
-                        suggestion.findViewById(R.id.view_report).setOnClickListener(v -> {
-
-                            editTextMessage.getText();
-
-                            if (editTextMessage.getText() != null) {
-
-                                String name = authManager.getUserInfo().getName();
-                                String email = authManager.getUserInfo().getEmail();
-
-                                if (!TextUtils.isEmpty(name)) {
-
-                                    homeViewModel.sendSuggestion(name, editTextMessage.getText().toString());
-
-                                } else if (!TextUtils.isEmpty(email)){
-
-                                    homeViewModel.sendSuggestion(email, editTextMessage.getText().toString());
-
-                                }else {
-
-                                    homeViewModel.sendSuggestion("User", editTextMessage.getText().toString());
-                                }
-
-
-                                homeViewModel.suggestMutableLiveData.observe(requireActivity(), report -> {
-
-                                    if (report != null) {
-
-                                        suggestion.dismiss();
-
-                                        Tools.ToastHelper(requireActivity(),requireActivity().getString(R.string.suggest_success));
-
-
-                                    }
-
-
-                                });
-
-                            }
-
-
-                        });
-
-                        suggestion.findViewById(R.id.bt_close).setOnClickListener(x ->
-                                suggestion.dismiss());
-                        suggestion.show();
-                        suggestion.getWindow().setAttributes(lps);
-
-                    } else {
-
-                        DialogHelper.showSuggestWarning(requireActivity());
-
-                    }
-
-                } else {
-
-                    final Dialog suggestion = new Dialog(requireActivity());
-                    suggestion.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    suggestion.setContentView(R.layout.dialog_suggest);
-                    suggestion.setCancelable(false);
-                    suggestion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                    WindowManager.LayoutParams lps = new WindowManager.LayoutParams();
-                    lps.copyFrom(suggestion.getWindow().getAttributes());
-
-                    lps.gravity = Gravity.BOTTOM;
-                    lps.width = MATCH_PARENT;
-                    lps.height = MATCH_PARENT;
-
-                    suggestion.show();
-                    suggestion.getWindow().setAttributes(lps);
-
-                    EditText editTextMessage = suggestion.findViewById(R.id.et_post);
-
-                    suggestion.findViewById(R.id.view_report).setOnClickListener(v -> {
-
-
-                        editTextMessage.getText();
-
-
-                        if (editTextMessage.getText() != null) {
-
-                            String suggestTitlte = authManager.getUserInfo().getEmail();
-
-                            if (!TextUtils.isEmpty(suggestTitlte)) {
-
-                                homeViewModel.sendSuggestion(suggestTitlte, editTextMessage.getText().toString());
-                            } else {
-
-                                homeViewModel.sendSuggestion("User", editTextMessage.getText().toString());
-                            }
-
-
-                            homeViewModel.suggestMutableLiveData.observe(requireActivity(), report -> {
-
-
-                                if (report != null) {
-
-
-                                    suggestion.dismiss();
-
-                                    Tools.ToastHelper(requireActivity(),requireActivity().getString(R.string.suggest_success));
-
-
-                                }
-
-
-                            });
-
-                        }
-
-
-                    });
-
-                    suggestion.findViewById(R.id.bt_close).setOnClickListener(x ->
-
-                   suggestion.dismiss());
-
-
-                    suggestion.show();
-                    suggestion.getWindow().setAttributes(lps);
-                }
-            } else if (id == R.id.nav_privacy) {
-                final Dialog navdialog = new Dialog(requireActivity());
-                navdialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-                navdialog.setContentView(R.layout.dialog_gdpr_basic);
-                navdialog.setCancelable(true);
-                WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-                layoutParams.copyFrom(navdialog.getWindow().getAttributes());
-                layoutParams.width = MATCH_PARENT;
-                layoutParams.height = WRAP_CONTENT;
-
-                TextView reportMovieName = navdialog.findViewById(R.id.tv_content);
-                reportMovieName.setText(settingsManager.getSettings().getPrivacyPolicy());
-
-                navdialog.findViewById(R.id.bt_accept).setOnClickListener(v1 -> navdialog.dismiss());
-
-                navdialog.findViewById(R.id.bt_decline).setOnClickListener(v12 -> navdialog.dismiss());
-
-
-                navdialog.show();
-                navdialog.getWindow().setAttributes(layoutParams);
-
-            }else if (id == R.id.nav_settings) {
-
-                requireActivity().startActivity(new Intent(requireActivity(), SettingsActivity.class));
-
-            }
-            binding.drawerLayout.closeDrawers();
-            return true;
-        });
+//        binding.drawerLayout.addDrawerListener(toggle);
+//        toggle.syncState();
+//        binding.navView.setNavigationItemSelectedListener(item -> {
+//            int id = item.getItemId();
+//            if (id == R.id.nav_aboutus) {
+//                final Dialog aboutusDialog = new Dialog(requireActivity());
+//                aboutusDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+//                aboutusDialog.setContentView(R.layout.dialog_about);
+//                aboutusDialog.setCancelable(true);
+//                aboutusDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//
+//                ImageView imageView = aboutusDialog.findViewById(R.id.logo_aboutus);
+//                TextView textView = aboutusDialog.findViewById(R.id.app_version);
+//
+//                if (settingsManager.getSettings().getLatestVersion() !=null && !settingsManager.getSettings().getLatestVersion().isEmpty()){
+//                    textView.setText(getString(R.string.app_versions) + settingsManager.getSettings().getLatestVersion());
+//                }else {
+//
+//                    String versionName = Utils.getAppVersionName(requireActivity());
+//                    textView.setText(getString(R.string.app_versions) + versionName);
+//                }
+//
+//                Tools.loadMainLogo(requireActivity(), imageView);
+//                WindowManager.LayoutParams layoutParams2 = new WindowManager.LayoutParams();
+//                layoutParams2.copyFrom(aboutusDialog.getWindow().getAttributes());
+//                layoutParams2.width = WRAP_CONTENT;
+//                layoutParams2.height = WRAP_CONTENT;
+//
+//                aboutusDialog.findViewById(R.id.bt_getcode).setOnClickListener(v15 -> {
+//                    if (settingsManager.getSettings().getAppUrlAndroid().isEmpty()) {
+//
+//                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.yobex))));
+//
+//                    } else {
+//
+//                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(settingsManager.getSettings().getAppUrlAndroid())));
+//
+//                    }
+//
+//                });
+//
+//                aboutusDialog.findViewById(R.id.bt_close).setOnClickListener(v14 -> aboutusDialog.dismiss());
+//
+//                aboutusDialog.findViewById(R.id.app_url).setOnClickListener(v13 -> {
+//
+//
+//                    if (settingsManager.getSettings().getAppUrlAndroid() != null && !settingsManager.getSettings().getAppUrlAndroid().trim().isEmpty()) {
+//
+//                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(settingsManager.getSettings().getAppUrlAndroid())));
+//
+//
+//                    } else {
+//
+//                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.yobex))));
+//
+//                    }
+//
+//                });
+//
+//                aboutusDialog.show();
+//                aboutusDialog.getWindow().setAttributes(layoutParams2);
+//            }
+//            else if (id == R.id.nav_suggestions) {
+//                if (settingsManager.getSettings().getSuggestAuth() == 1) {
+//
+//                    if (tokenManager.getToken().getAccessToken() != null) {
+//
+//
+//                        final Dialog suggestion = new Dialog(requireActivity());
+//                        suggestion.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                        suggestion.setContentView(R.layout.dialog_suggest);
+//                        suggestion.setCancelable(false);
+//                        suggestion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//
+//                        WindowManager.LayoutParams lps = new WindowManager.LayoutParams();
+//                        lps.copyFrom(suggestion.getWindow().getAttributes());
+//
+//                        lps.gravity = Gravity.BOTTOM;
+//                        lps.width = MATCH_PARENT;
+//                        lps.height = MATCH_PARENT;
+//
+//                        suggestion.show();
+//                        suggestion.getWindow().setAttributes(lps);
+//
+//                        EditText editTextMessage = suggestion.findViewById(R.id.et_post);
+//
+//                        suggestion.findViewById(R.id.view_report).setOnClickListener(v -> {
+//
+//                            editTextMessage.getText();
+//
+//                            if (editTextMessage.getText() != null) {
+//
+//                                String name = authManager.getUserInfo().getName();
+//                                String email = authManager.getUserInfo().getEmail();
+//
+//                                if (!TextUtils.isEmpty(name)) {
+//
+//                                    homeViewModel.sendSuggestion(name, editTextMessage.getText().toString());
+//
+//                                } else if (!TextUtils.isEmpty(email)){
+//
+//                                    homeViewModel.sendSuggestion(email, editTextMessage.getText().toString());
+//
+//                                }else {
+//
+//                                    homeViewModel.sendSuggestion("User", editTextMessage.getText().toString());
+//                                }
+//
+//
+//                                homeViewModel.suggestMutableLiveData.observe(requireActivity(), report -> {
+//
+//                                    if (report != null) {
+//
+//                                        suggestion.dismiss();
+//
+//                                        Tools.ToastHelper(requireActivity(),requireActivity().getString(R.string.suggest_success));
+//
+//
+//                                    }
+//
+//
+//                                });
+//
+//                            }
+//
+//
+//                        });
+//
+//                        suggestion.findViewById(R.id.bt_close).setOnClickListener(x ->
+//                                suggestion.dismiss());
+//                        suggestion.show();
+//                        suggestion.getWindow().setAttributes(lps);
+//
+//                    } else {
+//
+//                        DialogHelper.showSuggestWarning(requireActivity());
+//
+//                    }
+//
+//                }
+//                else {
+//
+//                    final Dialog suggestion = new Dialog(requireActivity());
+//                    suggestion.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                    suggestion.setContentView(R.layout.dialog_suggest);
+//                    suggestion.setCancelable(false);
+//                    suggestion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//
+//                    WindowManager.LayoutParams lps = new WindowManager.LayoutParams();
+//                    lps.copyFrom(suggestion.getWindow().getAttributes());
+//
+//                    lps.gravity = Gravity.BOTTOM;
+//                    lps.width = MATCH_PARENT;
+//                    lps.height = MATCH_PARENT;
+//
+//                    suggestion.show();
+//                    suggestion.getWindow().setAttributes(lps);
+//
+//                    EditText editTextMessage = suggestion.findViewById(R.id.et_post);
+//
+//                    suggestion.findViewById(R.id.view_report).setOnClickListener(v -> {
+//
+//
+//                        editTextMessage.getText();
+//
+//
+//                        if (editTextMessage.getText() != null) {
+//
+//                            String suggestTitlte = authManager.getUserInfo().getEmail();
+//
+//                            if (!TextUtils.isEmpty(suggestTitlte)) {
+//
+//                                homeViewModel.sendSuggestion(suggestTitlte, editTextMessage.getText().toString());
+//                            } else {
+//
+//                                homeViewModel.sendSuggestion("User", editTextMessage.getText().toString());
+//                            }
+//
+//
+//                            homeViewModel.suggestMutableLiveData.observe(requireActivity(), report -> {
+//
+//
+//                                if (report != null) {
+//
+//
+//                                    suggestion.dismiss();
+//
+//                                    Tools.ToastHelper(requireActivity(),requireActivity().getString(R.string.suggest_success));
+//
+//
+//                                }
+//
+//
+//                            });
+//
+//                        }
+//
+//
+//                    });
+//
+//                    suggestion.findViewById(R.id.bt_close).setOnClickListener(x ->
+//
+//                   suggestion.dismiss());
+//
+//
+//                    suggestion.show();
+//                    suggestion.getWindow().setAttributes(lps);
+//                }
+//            }
+//            else if (id == R.id.nav_privacy) {
+//                final Dialog navdialog = new Dialog(requireActivity());
+//                navdialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+//                navdialog.setContentView(R.layout.dialog_gdpr_basic);
+//                navdialog.setCancelable(true);
+//                WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+//                layoutParams.copyFrom(navdialog.getWindow().getAttributes());
+//                layoutParams.width = MATCH_PARENT;
+//                layoutParams.height = WRAP_CONTENT;
+//
+//                TextView reportMovieName = navdialog.findViewById(R.id.tv_content);
+//                reportMovieName.setText(settingsManager.getSettings().getPrivacyPolicy());
+//
+//                navdialog.findViewById(R.id.bt_accept).setOnClickListener(v1 -> navdialog.dismiss());
+//
+//                navdialog.findViewById(R.id.bt_decline).setOnClickListener(v12 -> navdialog.dismiss());
+//
+//
+//                navdialog.show();
+//                navdialog.getWindow().setAttributes(layoutParams);
+//
+//            }
+//            else if (id == R.id.nav_settings) {
+//
+//                requireActivity().startActivity(new Intent(requireActivity(), SettingsActivity.class));
+//
+//            }
+//            binding.drawerLayout.closeDrawers();
+//            return true;
+//        });
 
     }
 
@@ -2234,7 +2232,8 @@ public class HomeFragment extends Fragment implements Injectable {
                         } else {
 
                             bindingHeader.btnSubscribe.setVisibility(GONE);
-                            bindingHeader.userSubscribedBtn.setVisibility(VISIBLE);
+//                            bindingHeader.userSubscribedBtn.setVisibility(VISIBLE);
+                            bindingHeader.userSubscribedBtn.setVisibility(GONE);
 
 
                         }

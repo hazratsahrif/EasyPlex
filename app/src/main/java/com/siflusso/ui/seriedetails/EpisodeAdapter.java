@@ -5,6 +5,7 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static com.siflusso.util.Constants.ARG_MOVIE;
 import static com.siflusso.util.Constants.DEFAULT_WEBVIEW_ADS_RUNNING;
 import static com.siflusso.util.Constants.E;
+import static com.siflusso.util.Constants.ENABLE_LEFT_NAVBAR;
 import static com.siflusso.util.Constants.PLAYER_HEADER;
 import static com.siflusso.util.Constants.PLAYER_USER_AGENT;
 import static com.siflusso.util.Constants.S0;
@@ -34,6 +35,8 @@ import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -75,6 +78,7 @@ import com.siflusso.data.model.episode.EpisodeStream;
 import com.siflusso.data.model.media.MediaModel;
 import com.siflusso.data.model.media.Resume;
 import com.siflusso.data.model.report.Report;
+import com.siflusso.data.model.serie.Season;
 import com.siflusso.data.repository.MediaRepository;
 import com.siflusso.databinding.RowSeasonsBinding;
 import com.siflusso.ui.comments.CommentsAdapter;
@@ -133,6 +137,7 @@ import com.vungle.warren.error.VungleException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -164,7 +169,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
     private final String currentSeasons;
     private Download download;
     private final Media media;
-    final String seasonId;
+     String seasonId;
     private boolean adsLaunched = false;
     private final String currentSeasonsNumber;
     private final String currentTvShowName;
@@ -184,11 +189,16 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
     private EasyPlexSupportedHosts easyPlexSupportedHosts;
     private final String mediaGenre;
     private CommentsAdapter commentsAdapter;
+    private Media seriesDetail;
+    List<Season> season;
+    Episode episode;
 
     public EpisodeAdapter(String serieid, String seasonsid, String seasonsidpostion, String currentseason, SharedPreferences preferences, AuthManager authManager
 
             , SettingsManager settingsManager, MediaRepository mediaRepository, String currentTvShowName, int
-                                  premuim, TokenManager tokenManager, Context context, String serieCover, Media media, String mediaGenre, String externalId) {
+                                  premuim, TokenManager tokenManager, Context context, String serieCover, Media media, String mediaGenre, 
+                          String externalId,Media seriesDetail,
+   List<Season> season) {
         this.currentSerieId = serieid;
         this.currentSeasons = seasonsid;
         this.seasonId = seasonsidpostion;
@@ -205,11 +215,14 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         this.media = media;
         this.mediaGenre = mediaGenre;
         this.externalId = externalId;
+        this.seriesDetail = seriesDetail;
+        this.season = season;
 
     }
 
     @SuppressLint("NotifyDataSetChanged")
     public void addSeasons(List<Episode> episodeList) {
+
         this.episodeList = episodeList;
         notifyDataSetChanged();
     }
@@ -226,8 +239,11 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onBindViewHolder(@NonNull EpisodeViewHolder holder, int position) {
+        episode = episodeList.get(position);
+
         holder.onBind(position);
     }
+
 
     @Override
     public int getItemCount() {
@@ -242,17 +258,56 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
         private final RowSeasonsBinding binding;
 
-        EpisodeViewHolder(@NonNull RowSeasonsBinding binding)
-        {
+        EpisodeViewHolder(@NonNull RowSeasonsBinding binding) {
             super(binding.getRoot());
-
             this.binding = binding;
         }
 
         @SuppressLint({"SetTextI18n", "RestrictedApi"})
         void onBind(final int position) {
+            episode = episodeList.get(position);
+            if(position==0){
+                binding.planetsSpinner.setItem(season);
+                binding.planetsSpinner.setSelection(0);
+                binding.planetsSpinner.setVisibility(View.VISIBLE);
+                binding.planetsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
 
-            final Episode episode = episodeList.get(position);
+                        episode = episodeList.get(position);
+                        Season season = (Season) adapterView.getItemAtPosition(position);
+                        String episodeId = String.valueOf(season.getId());
+                        String currentSeason = season.getName();
+//                        addSeasons(season.getEpisodes());
+                        Toast.makeText(context, "Season"+currentSeason, Toast.LENGTH_SHORT).show();
+//                        notifyDataSetChanged();
+
+
+//                        notifyItemChanged(position);
+
+//
+//
+
+//                    mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
+//                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail);
+//
+
+//                    serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
+
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        // do nothing if no season selected
+
+                    }
+                });
+            }
+            else {
+                binding.planetsSpinner.setVisibility(GONE);
+            }
 
             if (episode.getStillPath() == null) {
 
@@ -268,13 +323,13 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
             }
 
 
-            download = new Download(String.valueOf(episode.getId()),String.valueOf(episode.getId()),episode.getStillPath(),currentTvShowName + " : " + "S0" +
+            download = new Download(String.valueOf(episode.getId()), String.valueOf(episode.getId()), episode.getStillPath(), currentTvShowName + " : " + "S0" +
                     currentSeasons + "E" + episode.getEpisodeNumber() +
-                    " : " + episode.getName(),episode.getLink());
+                    " : " + episode.getName(), episode.getLink());
 
-            Tools.onLoadMediaCoverEpisode(context,binding.epcover,episode.getStillPath());
+            Tools.onLoadMediaCoverEpisode(context, binding.epcover, episode.getStillPath());
 
-            binding.eptitle.setText(episode.getEpisodeNumber() +" - " +episode.getName());
+            binding.eptitle.setText(episode.getEpisodeNumber() + " - " + episode.getName());
             binding.epoverview.setText(episode.getOverview());
 
 
@@ -284,7 +339,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 onLoadEpisodeOffline(episode);
 
 
-            }else {
+            } else {
 
 
                 onLoadEpisodeOnline(episode);
@@ -294,7 +349,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
             binding.epLayout.setOnClickListener(v -> {
 
-                if (episode.getEnableStream() !=1) {
+                if (episode.getEnableStream() != 1) {
                     Toast.makeText(context, context.getString(R.string.stream_is_currently_not_available_for_this_media), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -302,7 +357,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                 onClickMoreOptionsIcons(episode, position);
             });
-
 
 
             if (settingsManager.getSettings().getEnableDownload() == 0) {
@@ -315,13 +369,13 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                 if (settingsManager.getSettings().getEnableDownload() == 0) {
 
-                    DialogHelper.showNoDownloadAvailable(context,context.getString(R.string.download_disabled));
+                    DialogHelper.showNoDownloadAvailable(context, context.getString(R.string.download_disabled));
 
-                }else    if (episode.getEnableMediaDownload() == 0) {
+                } else if (episode.getEnableMediaDownload() == 0) {
 
                     Toast.makeText(context, R.string.download_is_currently_not_available_for_this_media, Toast.LENGTH_SHORT).show();
 
-                }else  onLoadEpisodeDownloadInfo(episode, position);
+                } else onLoadEpisodeDownloadInfo(episode, position);
 
 
             });
@@ -332,7 +386,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 popup.inflate(R.menu.episode_item_popup);
                 popup.getMenu().findItem(R.id.episode_comments).setVisible(settingsManager.getSettings().getEnableComments() != 0);
                 popup.setForceShowIcon(true);
-                popup.setOnMenuItemClickListener(item -> episodeMiniMenuClicked(item,episode, position));
+                popup.setOnMenuItemClickListener(item -> episodeMiniMenuClicked(item, episode, position));
                 popup.show();
 
             });
@@ -370,7 +424,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     reportMovieName.setText(name);
 
-                    Tools.onLoadMediaCover(context,imageView,episode.getStillPath());
+                    Tools.onLoadMediaCover(context, imageView, episode.getStillPath());
 
 
                     dialog.findViewById(R.id.bt_close).setOnClickListener(v -> dialog.dismiss());
@@ -379,10 +433,10 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                         editTextMessage.getText();
 
-                        if (editTextMessage.getText() !=null) {
+                        if (editTextMessage.getText() != null) {
 
 
-                            mediaRepository.getReport(settingsManager.getSettings().getApiKey(),name,editTextMessage.getText().toString())
+                            mediaRepository.getReport(settingsManager.getSettings().getApiKey(), name, editTextMessage.getText().toString())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new Observer<>() {
@@ -439,7 +493,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     if (tokenManager.getToken().getAccessToken() != null) {
                         onLoadSerieComments(episode.getId());
-                    }else {
+                    } else {
                         Toast.makeText(context, "You need to login to able to add a comment !", Toast.LENGTH_SHORT).show();
                     }
 
@@ -463,7 +517,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     onLoadDownloadsList(episode);
 
-                }else {
+                } else {
 
                     DialogHelper.showPremuimWarning(context);
                 }
@@ -477,9 +531,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     onLoadDownloadsList(episode);
 
-                }else {
+                } else {
 
-                    onLoadSubscribeDialog(episode,position,false);
+                    onLoadSubscribeDialog(episode, position, false);
                 }
             }
         }
@@ -517,13 +571,13 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
             playButtonIcon.setOnClickListener(v -> {
 
 
-                if (episode.getEnableStream() !=1) {
+                if (episode.getEnableStream() != 1) {
 
                     Toast.makeText(context, "Stream is currently not available for this Media", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                onClickMoreOptionsIcons(episode,position);
+                onClickMoreOptionsIcons(episode, position);
                 dialog.dismiss();
             });
 
@@ -532,7 +586,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                 if (resumeInfo != null) {
 
-                    if (resumeInfo.getTmdb() != null && resumeInfo.getResumePosition() !=null
+                    if (resumeInfo.getTmdb() != null && resumeInfo.getResumePosition() != null
 
                             && resumeInfo.getTmdb().equals(String.valueOf(episode.getId())) && Tools.id(context).equals(resumeInfo.getDeviceId())) {
 
@@ -548,7 +602,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                         linearResume.setVisibility(View.VISIBLE);
 
 
-
                     } else {
 
                         progressBar.setProgress(0);
@@ -559,7 +612,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     }
 
-                }else {
+                } else {
 
                     progressBar.setProgress(0);
                     progressBar.setVisibility(GONE);
@@ -593,30 +646,29 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
         private void onClickMoreOptionsIcons(Episode episode, int position) {
 
-            if (!episode.getVideos().isEmpty() && episode.getVideos() !=null) {
+            if (!episode.getVideos().isEmpty() && episode.getVideos() != null) {
 
 
-               if (premuim == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
+                if (premuim == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
 
-                    onStartEpisode(episode,position);
-
-
-                }else if (episode.getEnableAdsUnlock() ==1 ){
+                    onStartEpisode(episode, position);
 
 
-                   if (premuim == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null){
-
-                       onStartEpisode(episode,position);
+                } else if (episode.getEnableAdsUnlock() == 1) {
 
 
-                   }else {
+                    if (premuim == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
 
-                       onLoadSubscribeDialog(episode,position,true);
-                   }
-
+                        onStartEpisode(episode, position);
 
 
-                }  else if (settingsManager.getSettings().getWachAdsToUnlock() == 1 && premuim != 1 && authManager.getUserInfo().getPremuim() == 0) {
+                    } else {
+
+                        onLoadSubscribeDialog(episode, position, true);
+                    }
+
+
+                } else if (settingsManager.getSettings().getWachAdsToUnlock() == 1 && premuim != 1 && authManager.getUserInfo().getPremuim() == 0) {
 
                     if (settingsManager.getSettings().getEnableWebview() == 1) {
 
@@ -647,12 +699,12 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                                     WebSettings webSettings = webView.getSettings();
                                     webSettings.setSupportMultipleWindows(false);
                                     webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
-                                    if (settingsManager.getSettings().getWebviewLink() !=null && !settingsManager.getSettings().getWebviewLink().isEmpty()) {
+                                    if (settingsManager.getSettings().getWebviewLink() != null && !settingsManager.getSettings().getWebviewLink().isEmpty()) {
 
                                         webView.loadUrl(settingsManager.getSettings().getWebviewLink());
-                                    }else {
+                                    } else {
 
-                                        webView.loadUrl(SERVER_BASE_URL+"webview");
+                                        webView.loadUrl(SERVER_BASE_URL + "webview");
                                     }
 
                                     webViewLauched = true;
@@ -664,7 +716,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                             public void onFinish() {
 
                                 dialog.dismiss();
-                                onStartEpisode(episode,position);
+                                onStartEpisode(episode, position);
                                 webViewLauched = false;
 
                                 if (mCountDownTimer != null) {
@@ -681,21 +733,21 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                         dialog.getWindow().setAttributes(lp);
 
 
-                    }else {
+                    } else {
 
-                        onLoadSubscribeDialog(episode,position,true);
+                        onLoadSubscribeDialog(episode, position, true);
                     }
 
                 } else if (settingsManager.getSettings().getWachAdsToUnlock() == 0 && premuim == 0) {
 
 
-                    onStartEpisode(episode,position);
+                    onStartEpisode(episode, position);
 
 
                 } else if (authManager.getUserInfo().getPremuim() == 1 && premuim == 0) {
 
 
-                    onStartEpisode(episode,position);
+                    onStartEpisode(episode, position);
 
 
                 } else {
@@ -704,7 +756,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                 }
 
-            }else {
+            } else {
 
 
                 DialogHelper.showNoStreamEpisode(context);
@@ -714,7 +766,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
         private void onLoadEpisodeOnline(Episode episode) {
 
-            mediaRepository.getResumeById(String.valueOf(episode.getId()),settingsManager.getSettings().getApiKey())
+            mediaRepository.getResumeById(String.valueOf(episode.getId()), settingsManager.getSettings().getApiKey())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<>() {
@@ -785,7 +837,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
             if (settingsManager.getSettings().getServerDialogSelection() == 1) {
 
                 String[] charSequence = new String[episode.getVideos().size()];
-                for (int i = 0; i<episode.getVideos().size(); i++) {
+                for (int i = 0; i < episode.getVideos().size(); i++) {
                     charSequence[i] = episode.getVideos().get(i).getServer() + " - " + episode.getVideos().get(i).getLang();
 
                 }
@@ -795,13 +847,13 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 builder.setCancelable(true);
                 builder.setItems(charSequence, (dialogInterface, wich) -> {
 
-                    if (episode.getVideos().get(wich).getHeader() !=null && !episode.getVideos().get(wich).getHeader().isEmpty()) {
+                    if (episode.getVideos().get(wich).getHeader() != null && !episode.getVideos().get(wich).getHeader().isEmpty()) {
 
                         PLAYER_HEADER = episode.getVideos().get(wich).getHeader();
                     }
 
 
-                    if (episode.getVideos().get(wich).getUseragent() !=null && !episode.getVideos().get(wich).getUseragent().isEmpty()) {
+                    if (episode.getVideos().get(wich).getUseragent() != null && !episode.getVideos().get(wich).getUseragent().isEmpty()) {
 
                         PLAYER_USER_AGENT = episode.getVideos().get(wich).getUseragent();
                     }
@@ -814,11 +866,11 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                         context.startActivity(intent);
 
 
-                    }else if (episode.getVideos().get(wich).getSupportedHosts() == 1) {
+                    } else if (episode.getVideos().get(wich).getSupportedHosts() == 1) {
 
-                        startSupportedHostsStream(episode,wich);
+                        startSupportedHostsStream(episode, wich);
 
-                    }else if (castSession != null && castSession.isConnected()) {
+                    } else if (castSession != null && castSession.isConnected()) {
 
                         onLoadChromcast(episode, castSession, episode.getVideos().get(wich).getLink());
 
@@ -845,26 +897,26 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                         LinearLayout webcast = dialog.findViewById(R.id.webCast);
 
                         vlc.setOnClickListener(v12 -> {
-                            Tools.streamEpisodeFromVlc(context,episode.getVideos().get(wich).getLink(),episode,settingsManager);
+                            Tools.streamEpisodeFromVlc(context, episode.getVideos().get(wich).getLink(), episode, settingsManager);
                             dialog.hide();
                         });
 
                         mxPlayer.setOnClickListener(v12 -> {
-                            Tools.streamEpisodeFromMxPlayer(context,episode.getVideos().get(wich).getLink(),episode,settingsManager);
+                            Tools.streamEpisodeFromMxPlayer(context, episode.getVideos().get(wich).getLink(), episode, settingsManager);
                             dialog.hide();
 
                         });
 
                         webcast.setOnClickListener(v12 -> {
 
-                            Tools.streamEpisodeFromMxWebcast(context,episode.getVideos().get(wich).getLink(),episode,settingsManager);
+                            Tools.streamEpisodeFromMxWebcast(context, episode.getVideos().get(wich).getLink(), episode, settingsManager);
                             dialog.hide();
 
                         });
 
 
                         easyplexPlayer.setOnClickListener(v12 -> {
-                            onLoadMainPlayerStream(episode,position, episode.getVideos().get(wich).getLink(),episode.getVideos().get(wich));
+                            onLoadMainPlayerStream(episode, position, episode.getVideos().get(wich).getLink(), episode.getVideos().get(wich));
                             dialog.hide();
                         });
 
@@ -882,7 +934,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     } else {
 
-                        onLoadMainPlayerStream(episode,position, episode.getVideos().get(wich).getLink(), episode.getVideos().get(wich));
+                        onLoadMainPlayerStream(episode, position, episode.getVideos().get(wich).getLink(), episode.getVideos().get(wich));
 
                     }
 
@@ -893,13 +945,13 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
             } else {
 
 
-                if (episode.getVideos().get(0).getHeader() !=null && !episode.getVideos().get(0).getHeader().isEmpty()) {
+                if (episode.getVideos().get(0).getHeader() != null && !episode.getVideos().get(0).getHeader().isEmpty()) {
 
                     PLAYER_HEADER = episode.getVideos().get(0).getHeader();
                 }
 
 
-                if (episode.getVideos().get(0).getUseragent() !=null && !episode.getVideos().get(0).getUseragent().isEmpty()) {
+                if (episode.getVideos().get(0).getUseragent() != null && !episode.getVideos().get(0).getUseragent().isEmpty()) {
 
                     PLAYER_USER_AGENT = episode.getVideos().get(0).getUseragent();
                 }
@@ -913,13 +965,13 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                     context.startActivity(intent);
 
 
-                }else if (episode.getVideos().get(0).getSupportedHosts() == 1){
+                } else if (episode.getVideos().get(0).getSupportedHosts() == 1) {
 
 
                     easyPlexSupportedHosts = new EasyPlexSupportedHosts(context);
 
 
-                    if (settingsManager.getSettings().getHxfileApiKey() !=null && !settingsManager.getSettings().getHxfileApiKey().isEmpty())  {
+                    if (settingsManager.getSettings().getHxfileApiKey() != null && !settingsManager.getSettings().getHxfileApiKey().isEmpty()) {
 
                         easyPlexSupportedHosts.setApikey(settingsManager.getSettings().getHxfileApiKey());
                     }
@@ -952,7 +1004,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                                             onLoadChromcast(episode, castSession, vidURL.get(i).getUrl());
 
-                                        }else if (settingsManager.getSettings().getVlc() == 1) {
+                                        } else if (settingsManager.getSettings().getVlc() == 1) {
 
                                             final Dialog dialog = new Dialog(context);
                                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -975,26 +1027,26 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
 
                                             vlc.setOnClickListener(v12 -> {
-                                                Tools.streamEpisodeFromVlc(context,vidURL.get(i).getUrl(),episode,settingsManager);
+                                                Tools.streamEpisodeFromVlc(context, vidURL.get(i).getUrl(), episode, settingsManager);
                                                 dialog.hide();
                                             });
 
                                             mxPlayer.setOnClickListener(v12 -> {
-                                                Tools.streamEpisodeFromMxPlayer(context,vidURL.get(i).getUrl(),episode,settingsManager);
+                                                Tools.streamEpisodeFromMxPlayer(context, vidURL.get(i).getUrl(), episode, settingsManager);
                                                 dialog.hide();
 
                                             });
 
                                             webcast.setOnClickListener(v12 -> {
 
-                                                Tools.streamEpisodeFromMxWebcast(context,vidURL.get(i).getUrl(),episode,settingsManager);
+                                                Tools.streamEpisodeFromMxWebcast(context, vidURL.get(i).getUrl(), episode, settingsManager);
                                                 dialog.hide();
 
                                             });
 
                                             easyplexPlayer.setOnClickListener(v12 -> {
 
-                                                onLoadMainPlayerStream(episode,position, vidURL.get(i).getUrl(), episode.getVideos().get(0));
+                                                onLoadMainPlayerStream(episode, position, vidURL.get(i).getUrl(), episode.getVideos().get(0));
                                                 dialog.hide();
 
 
@@ -1014,7 +1066,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                                         } else {
 
-                                            onLoadMainPlayerStream(episode,position, vidURL.get(i).getUrl(), episode.getVideos().get(0));
+                                            onLoadMainPlayerStream(episode, position, vidURL.get(i).getUrl(), episode.getVideos().get(0));
 
 
                                         }
@@ -1049,26 +1101,26 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
 
                                 vlc.setOnClickListener(v12 -> {
-                                    Tools.streamEpisodeFromVlc(context,vidURL.get(0).getUrl(),episode,settingsManager);
+                                    Tools.streamEpisodeFromVlc(context, vidURL.get(0).getUrl(), episode, settingsManager);
                                     dialog.hide();
                                 });
 
                                 mxPlayer.setOnClickListener(v12 -> {
-                                    Tools.streamEpisodeFromMxPlayer(context,vidURL.get(0).getUrl(),episode,settingsManager);
+                                    Tools.streamEpisodeFromMxPlayer(context, vidURL.get(0).getUrl(), episode, settingsManager);
                                     dialog.hide();
 
                                 });
 
                                 webcast.setOnClickListener(v12 -> {
 
-                                    Tools.streamEpisodeFromMxWebcast(context,vidURL.get(0).getUrl(),episode,settingsManager);
+                                    Tools.streamEpisodeFromMxWebcast(context, vidURL.get(0).getUrl(), episode, settingsManager);
                                     dialog.hide();
 
                                 });
 
                                 easyplexPlayer.setOnClickListener(v12 -> {
 
-                                    onLoadMainPlayerStream(episode,position, vidURL.get(0).getUrl(), episode.getVideos().get(0));
+                                    onLoadMainPlayerStream(episode, position, vidURL.get(0).getUrl(), episode.getVideos().get(0));
                                     dialog.hide();
 
 
@@ -1086,9 +1138,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                                 dialog.getWindow().setAttributes(lp);
 
 
-                            }else {
+                            } else {
 
-                                onLoadMainPlayerStream(episode,position, vidURL.get(0).getUrl(), episode.getVideos().get(0));
+                                onLoadMainPlayerStream(episode, position, vidURL.get(0).getUrl(), episode.getVideos().get(0));
                             }
 
                         }
@@ -1110,7 +1162,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                         onLoadChromcast(episode, castSession, episode.getVideos().get(0).getLink());
 
-                    }else if (settingsManager.getSettings().getVlc() == 1) {
+                    } else if (settingsManager.getSettings().getVlc() == 1) {
 
 
                         final Dialog dialog = new Dialog(context);
@@ -1133,26 +1185,26 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                         LinearLayout webcast = dialog.findViewById(R.id.webCast);
 
                         vlc.setOnClickListener(v12 -> {
-                            Tools.streamEpisodeFromVlc(context,episode.getVideos().get(0).getLink(),episode,settingsManager);
+                            Tools.streamEpisodeFromVlc(context, episode.getVideos().get(0).getLink(), episode, settingsManager);
                             dialog.hide();
                         });
 
                         mxPlayer.setOnClickListener(v12 -> {
-                            Tools.streamEpisodeFromMxPlayer(context,episode.getVideos().get(0).getLink(),episode,settingsManager);
+                            Tools.streamEpisodeFromMxPlayer(context, episode.getVideos().get(0).getLink(), episode, settingsManager);
                             dialog.hide();
 
                         });
 
                         webcast.setOnClickListener(v12 -> {
 
-                            Tools.streamEpisodeFromMxWebcast(context,episode.getVideos().get(0).getLink(),episode,settingsManager);
+                            Tools.streamEpisodeFromMxWebcast(context, episode.getVideos().get(0).getLink(), episode, settingsManager);
                             dialog.hide();
 
                         });
 
 
                         easyplexPlayer.setOnClickListener(v12 -> {
-                            onLoadMainPlayerStream(episode,position, episode.getVideos().get(0).getLink(),episode.getVideos().get(0));
+                            onLoadMainPlayerStream(episode, position, episode.getVideos().get(0).getLink(), episode.getVideos().get(0));
                             dialog.hide();
                         });
 
@@ -1170,12 +1222,11 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     } else {
 
-                        onLoadMainPlayerStream(episode,position, episode.getVideos().get(0).getLink(), episode.getVideos().get(0));
+                        onLoadMainPlayerStream(episode, position, episode.getVideos().get(0).getLink(), episode.getVideos().get(0));
 
                     }
 
                 }
-
 
 
             }
@@ -1186,7 +1237,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
             String currentepname = episode.getName();
             String artwork = episode.getStillPath();
-            String name = currentTvShowName + " : " +"S0" + currentSeasons + "E" + episode.getEpisodeNumber() + " : " + episode.getName();
+            String name = currentTvShowName + " : " + "S0" + currentSeasons + "E" + episode.getEpisodeNumber() + " : " + episode.getName();
 
             MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
             movieMetadata.putString(MediaMetadata.KEY_TITLE, name);
@@ -1277,7 +1328,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
             easyPlexSupportedHosts = new EasyPlexSupportedHosts(context);
 
-            if (settingsManager.getSettings().getHxfileApiKey() !=null && !settingsManager.getSettings().getHxfileApiKey().isEmpty())  {
+            if (settingsManager.getSettings().getHxfileApiKey() != null && !settingsManager.getSettings().getHxfileApiKey().isEmpty()) {
 
                 easyPlexSupportedHosts.setApikey(settingsManager.getSettings().getHxfileApiKey());
             }
@@ -1289,8 +1340,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 @Override
                 public void onTaskCompleted(ArrayList<EasyPlexSupportedHostsModel> vidURL, boolean multipleQuality) {
 
-                    if (multipleQuality){
-                        if (vidURL!=null) {
+                    if (multipleQuality) {
+                        if (vidURL != null) {
 
                             CharSequence[] name = new CharSequence[vidURL.size()];
 
@@ -1312,7 +1363,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                                     onLoadChromcast(episode, castSession, vidURL.get(i).getUrl());
 
 
-                                }else if (settingsManager.getSettings().getVlc() == 1) {
+                                } else if (settingsManager.getSettings().getVlc() == 1) {
 
 
                                     final Dialog dialog = new Dialog(context);
@@ -1336,26 +1387,26 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
 
                                     vlc.setOnClickListener(v12 -> {
-                                        Tools.streamEpisodeFromVlc(context,vidURL.get(i).getUrl(),episode,settingsManager);
+                                        Tools.streamEpisodeFromVlc(context, vidURL.get(i).getUrl(), episode, settingsManager);
                                         dialog.hide();
                                     });
 
                                     mxPlayer.setOnClickListener(v12 -> {
-                                        Tools.streamEpisodeFromMxPlayer(context,vidURL.get(i).getUrl(),episode,settingsManager);
+                                        Tools.streamEpisodeFromMxPlayer(context, vidURL.get(i).getUrl(), episode, settingsManager);
                                         dialog.hide();
 
                                     });
 
                                     webcast.setOnClickListener(v12 -> {
 
-                                        Tools.streamEpisodeFromMxWebcast(context,vidURL.get(i).getUrl(),episode,settingsManager);
+                                        Tools.streamEpisodeFromMxWebcast(context, vidURL.get(i).getUrl(), episode, settingsManager);
                                         dialog.hide();
 
                                     });
 
                                     easyplexPlayer.setOnClickListener(v12 -> {
 
-                                        onLoadMainPlayerStream(episode,wich, vidURL.get(i).getUrl(), episode.getVideos().get(wich));
+                                        onLoadMainPlayerStream(episode, wich, vidURL.get(i).getUrl(), episode.getVideos().get(wich));
                                         dialog.hide();
 
 
@@ -1375,7 +1426,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                                 } else {
 
-                                    onLoadMainPlayerStream(episode,wich, vidURL.get(i).getUrl(), episode.getVideos().get(wich));
+                                    onLoadMainPlayerStream(episode, wich, vidURL.get(i).getUrl(), episode.getVideos().get(wich));
 
                                 }
 
@@ -1385,15 +1436,14 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                             builder.show();
 
 
+                        } else Toast.makeText(context, "NULL", Toast.LENGTH_SHORT).show();
 
-                        }else  Toast.makeText(context, "NULL", Toast.LENGTH_SHORT).show();
-
-                    }else if (castSession != null && castSession.isConnected()) {
+                    } else if (castSession != null && castSession.isConnected()) {
 
                         onLoadChromcast(episode, castSession, vidURL.get(0).getUrl());
 
 
-                    }else if (settingsManager.getSettings().getVlc() == 1) {
+                    } else if (settingsManager.getSettings().getVlc() == 1) {
 
 
                         final Dialog dialog = new Dialog(context);
@@ -1417,26 +1467,26 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
 
                         vlc.setOnClickListener(v12 -> {
-                            Tools.streamEpisodeFromVlc(context,vidURL.get(0).getUrl(),episode,settingsManager);
+                            Tools.streamEpisodeFromVlc(context, vidURL.get(0).getUrl(), episode, settingsManager);
                             dialog.hide();
                         });
 
                         mxPlayer.setOnClickListener(v12 -> {
-                            Tools.streamEpisodeFromMxPlayer(context,vidURL.get(0).getUrl(),episode,settingsManager);
+                            Tools.streamEpisodeFromMxPlayer(context, vidURL.get(0).getUrl(), episode, settingsManager);
                             dialog.hide();
 
                         });
 
                         webcast.setOnClickListener(v12 -> {
 
-                            Tools.streamEpisodeFromMxWebcast(context,vidURL.get(0).getUrl(),episode,settingsManager);
+                            Tools.streamEpisodeFromMxWebcast(context, vidURL.get(0).getUrl(), episode, settingsManager);
                             dialog.hide();
 
                         });
 
                         easyplexPlayer.setOnClickListener(v12 -> {
 
-                            onLoadMainPlayerStream(episode,wich, vidURL.get(0).getUrl(), episode.getVideos().get(wich));
+                            onLoadMainPlayerStream(episode, wich, vidURL.get(0).getUrl(), episode.getVideos().get(wich));
                             dialog.hide();
 
 
@@ -1456,7 +1506,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     } else {
 
-                        onLoadMainPlayerStream(episode,wich, vidURL.get(0).getUrl(), episode.getVideos().get(wich));
+                        onLoadMainPlayerStream(episode, wich, vidURL.get(0).getUrl(), episode.getVideos().get(wich));
 
                     }
                 }
@@ -1495,47 +1545,46 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                 if (context.getString(R.string.applovin).equals(defaultRewardedNetworkAds)) {
 
-                    maxRewardedAd = MaxRewardedAd.getInstance( settingsManager.getSettings().getApplovinRewardUnitid(), (SerieDetailsActivity) context );
+                    maxRewardedAd = MaxRewardedAd.getInstance(settingsManager.getSettings().getApplovinRewardUnitid(), (SerieDetailsActivity) context);
                     maxRewardedAd.loadAd();
 
-                    onLoadApplovinAds(media,position,stream);
+                    onLoadApplovinAds(media, position, stream);
 
-                }else if (context.getString(R.string.vungle).equals(defaultRewardedNetworkAds)) {
+                } else if (context.getString(R.string.vungle).equals(defaultRewardedNetworkAds)) {
 
-                    onLoadVungleAds(media,position,stream);
+                    onLoadVungleAds(media, position, stream);
 
-                }else if (context.getString(R.string.appnext).equals(defaultRewardedNetworkAds)) {
+                } else if (context.getString(R.string.appnext).equals(defaultRewardedNetworkAds)) {
 
-                    onLoadAppNextAds(media,position,stream);
+                    onLoadAppNextAds(media, position, stream);
 
-                }else if (context.getString(R.string.ironsource).equals(defaultRewardedNetworkAds)) {
+                } else if (context.getString(R.string.ironsource).equals(defaultRewardedNetworkAds)) {
 
 
-                    onLoadIronSourceAds(media,position,stream);
+                    onLoadIronSourceAds(media, position, stream);
 
-                }else if (context.getString(R.string.unityads).equals(defaultRewardedNetworkAds)) {
+                } else if (context.getString(R.string.unityads).equals(defaultRewardedNetworkAds)) {
 
-                    onLoadUnityAds(media,position,stream);
+                    onLoadUnityAds(media, position, stream);
 
 
                 } else if (context.getString(R.string.admob).equals(defaultRewardedNetworkAds)) {
 
-                    onLoadAdmobRewardAds(media,position,stream);
+                    onLoadAdmobRewardAds(media, position, stream);
 
 
-                }else if (context.getString(R.string.appodeal).equals(defaultRewardedNetworkAds)) {
+                } else if (context.getString(R.string.appodeal).equals(defaultRewardedNetworkAds)) {
 
-                    onLoadAppOdealRewardAds(media,position,stream);
+                    onLoadAppOdealRewardAds(media, position, stream);
 
                 } else if (context.getString(R.string.facebook).equals(defaultRewardedNetworkAds)) {
 
-                    onLoadFaceBookRewardAds(media,position,stream);
+                    onLoadFaceBookRewardAds(media, position, stream);
 
                 }
                 dialog.dismiss();
 
             });
-
 
 
             dialog.findViewById(R.id.text_view_go_pro).setOnClickListener(v -> {
@@ -1546,8 +1595,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
 
             });
-
-
 
 
             dialog.findViewById(R.id.bt_close).setOnClickListener(v ->
@@ -1611,9 +1658,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     if (stream) {
 
-                        onStartEpisode(episode,position);
+                        onStartEpisode(episode, position);
 
-                    }else {
+                    } else {
 
                         onLoadDownloadsList(episode);
                     }
@@ -1643,7 +1690,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 }
 
 
-
                 @Override
                 public void onAdEnd(String id, boolean completed, boolean isCTAClicked) {
 
@@ -1663,9 +1709,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     if (stream) {
 
-                        onStartEpisode(episode,position);
+                        onStartEpisode(episode, position);
 
-                    }else {
+                    } else {
 
                         onLoadDownloadsList(episode);
                     }
@@ -1725,9 +1771,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
             mAppNextAdsVideoRewarded.setOnAdClosedCallback(() -> {
                 if (stream) {
 
-                    onStartEpisode(episode,position);
+                    onStartEpisode(episode, position);
 
-                }else {
+                } else {
 
                     onLoadDownloadsList(episode);
                 }
@@ -1772,9 +1818,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     if (stream) {
 
-                        onStartEpisode(episode,position);
+                        onStartEpisode(episode, position);
 
-                    }else {
+                    } else {
 
                         onLoadDownloadsList(episode);
                     }
@@ -1850,9 +1896,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     if (stream) {
 
-                        onStartEpisode(episode,position);
+                        onStartEpisode(episode, position);
 
-                    }else {
+                    } else {
 
                         onLoadDownloadsList(episode);
                     }
@@ -1882,7 +1928,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         private void onLoadFaceBookRewardAds(Episode episode, int position, boolean stream) {
 
 
-            com.facebook.ads.InterstitialAd facebookInterstitialAd = new com.facebook.ads.InterstitialAd(context,settingsManager.getSettings().getAdUnitIdFacebookInterstitialAudience());
+            com.facebook.ads.InterstitialAd facebookInterstitialAd = new com.facebook.ads.InterstitialAd(context, settingsManager.getSettings().getAdUnitIdFacebookInterstitialAudience());
 
             InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
 
@@ -1926,9 +1972,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     if (stream) {
 
-                        onStartEpisode(episode,position);
+                        onStartEpisode(episode, position);
 
-                    }else {
+                    } else {
 
                         onLoadDownloadsList(episode);
                     }
@@ -1976,9 +2022,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
             mRewardedAd.show((SerieDetailsActivity) context, rewardItem -> {
                 if (stream) {
 
-                    onStartEpisode(episode,position);
+                    onStartEpisode(episode, position);
 
-                }else {
+                } else {
 
                     onLoadDownloadsList(episode);
                 }
@@ -1994,7 +2040,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 @Override
                 public void onUnityAdsAdLoaded(String placementId) {
 
-                    UnityAds.show ((SerieDetailsActivity) context, settingsManager.getSettings().getUnityRewardPlacementId(), new IUnityAdsShowListener() {
+                    UnityAds.show((SerieDetailsActivity) context, settingsManager.getSettings().getUnityRewardPlacementId(), new IUnityAdsShowListener() {
                         @Override
                         public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
 
@@ -2017,9 +2063,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                             if (stream) {
 
-                                onStartEpisode(episode,position);
+                                onStartEpisode(episode, position);
 
-                            }else {
+                            } else {
 
                                 onLoadDownloadsList(episode);
                             }
@@ -2038,7 +2084,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
             });
 
 
-
         }
 
         private void onLoadEpisodeOffline(Episode episode) {
@@ -2047,7 +2092,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                 if (resumeInfo != null) {
 
-                    if (resumeInfo.getTmdb() != null && resumeInfo.getResumePosition() !=null
+                    if (resumeInfo.getTmdb() != null && resumeInfo.getResumePosition() != null
 
                             && resumeInfo.getTmdb().equals(String.valueOf(episode.getId())) && Tools.id(context).equals(resumeInfo.getDeviceId())) {
 
@@ -2063,7 +2108,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                         binding.timeRemaning.setText(Tools.getProgressTime((resumeInfo.getMovieDuration() - resumeInfo.getResumePosition()), true));
 
 
-
                     } else {
 
                         binding.resumeProgressBar.setProgress(0);
@@ -2072,7 +2116,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                     }
 
-                }else {
+                } else {
 
 
                     binding.resumeProgressBar.setProgress(0);
@@ -2087,13 +2131,13 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
         private void onLoadMainPlayerStream(Episode episode, int position, String url, EpisodeStream episodeStream) {
 
-            if (episodeStream.getHeader() !=null && !episodeStream.getHeader().isEmpty()) {
+            if (episodeStream.getHeader() != null && !episodeStream.getHeader().isEmpty()) {
 
                 settingsManager.getSettings().setHeader(episodeStream.getHeader());
             }
 
 
-            if (episodeStream.getUseragent() !=null && !episodeStream.getUseragent().isEmpty()) {
+            if (episodeStream.getUseragent() != null && !episodeStream.getUseragent().isEmpty()) {
 
                 settingsManager.getSettings().setUserAgent(episodeStream.getUseragent());
             }
@@ -2116,19 +2160,19 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                             , currentSeasons, currentepimdb, tvseasonid,
                             currentepname,
                             currentSeasonsNumber, position,
-                            currenteptmdbnumber, premuim,episodeStream.getHls(),
-                            null,externalId,serieCover
-                            ,episode.getHasrecap(),
+                            currenteptmdbnumber, premuim, episodeStream.getHls(),
+                            null, externalId, serieCover
+                            , episode.getHasrecap(),
                             episode.getSkiprecapStartIn(),
-                            mediaGenre,currentTvShowName,Float.parseFloat(episode.getVoteAverage()),
-                            episodeStream.getDrmuuid(),episodeStream.getDrmlicenceuri(),episodeStream.getDrm()));
+                            mediaGenre, currentTvShowName, Float.parseFloat(episode.getVoteAverage()),
+                            episodeStream.getDrmuuid(), episodeStream.getDrmlicenceuri(), episodeStream.getDrm()));
             intent.putExtra(ARG_MOVIE, media);
             context.startActivity(intent);
 
-            history = new History(currentSerieId,currentSerieId,serieCover,name,"","");
+            history = new History(currentSerieId, currentSerieId, serieCover, name, "", "");
 
 
-            if (authManager.getSettingsProfile().getId() !=null) {
+            if (authManager.getSettingsProfile().getId() != null) {
 
                 history.setUserProfile(String.valueOf(authManager.getSettingsProfile().getId()));
 
@@ -2187,14 +2231,14 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 maxRewardedAd = MaxRewardedAd.getInstance(settingsManager.getSettings().getApplovinRewardUnitid(), (SerieDetailsActivity) context);
                 maxRewardedAd.loadAd();
 
-            }else if (context.getString(R.string.appnext).equals(settingsManager.getSettings().getDefaultRewardedNetworkAds())) {
+            } else if (context.getString(R.string.appnext).equals(settingsManager.getSettings().getDefaultRewardedNetworkAds())) {
 
                 // Initialize the AppNext Ads SDK.
                 Appnext.init(context);
 
-            }else if (context.getString(R.string.appodeal).equals(settingsManager.getSettings().getDefaultRewardedNetworkAds())) {
+            } else if (context.getString(R.string.appodeal).equals(settingsManager.getSettings().getDefaultRewardedNetworkAds())) {
 
-                if (settingsManager.getSettings().getAdUnitIdAppodealRewarded() !=null) {
+                if (settingsManager.getSettings().getAdUnitIdAppodealRewarded() != null) {
 
                     Appodeal.initialize((SerieDetailsActivity) context, settingsManager.getSettings().getAdUnitIdAppodealRewarded(), Appodeal.REWARDED_VIDEO, list -> {
                         //
@@ -2202,7 +2246,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                 }
 
-            }else if (context.getString(R.string.unityads).equals(settingsManager.getSettings().getDefaultRewardedNetworkAds())){
+            } else if (context.getString(R.string.unityads).equals(settingsManager.getSettings().getDefaultRewardedNetworkAds())) {
 
                 UnityAds.load(settingsManager.getSettings().getUnityInterstitialPlacementId(), new IUnityAdsLoadListener() {
                     @Override
@@ -2221,12 +2265,13 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 });
 
 
-
             }
 
             adsLaunched = true;
             if (preferences.getString(
-                    FsmPlayerApi.decodeServerMainApi2(), FsmPlayerApi.decodeServerMainApi4()).equals(FsmPlayerApi.decodeServerMainApi4())) { ((SerieDetailsActivity)context).finish(); }
+                    FsmPlayerApi.decodeServerMainApi2(), FsmPlayerApi.decodeServerMainApi4()).equals(FsmPlayerApi.decodeServerMainApi4())) {
+                ((SerieDetailsActivity) context).finish();
+            }
         }
 
     }
@@ -2266,8 +2311,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
 
         commentsAdapter.setOnItemClickListener(clicked -> {
-            if (clicked){
-                mediaRepository.getEpisodesComments(id,settingsManager.getSettings().getApiKey())
+            if (clicked) {
+                mediaRepository.getEpisodesComments(id, settingsManager.getSettings().getApiKey())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<>() {
@@ -2282,7 +2327,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                             @Override
                             public void onNext(@io.reactivex.rxjava3.annotations.NonNull MovieResponse movieResponse) {
 
-                                commentsAdapter.addToContent(movieResponse.getComments(),context,authManager,mediaRepository);
+                                commentsAdapter.addToContent(movieResponse.getComments(), context, authManager, mediaRepository);
                                 commentsAdapter.notifyDataSetChanged();
 
                             }
@@ -2305,7 +2350,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         });
 
 
-        mediaRepository.getEpisodesComments(id,settingsManager.getSettings().getApiKey())
+        mediaRepository.getEpisodesComments(id, settingsManager.getSettings().getApiKey())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<>() {
@@ -2319,24 +2364,24 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                     @Override
                     public void onNext(@io.reactivex.rxjava3.annotations.NonNull MovieResponse movieResponse) {
 
-                        commentsAdapter.addToContent(movieResponse.getComments(),context,authManager,mediaRepository);
+                        commentsAdapter.addToContent(movieResponse.getComments(), context, authManager, mediaRepository);
                         rvComments.setAdapter(commentsAdapter);
 
                         if (commentsAdapter.getItemCount() == 0) {
                             noCommentFound.setVisibility(View.VISIBLE);
 
-                        }else {
+                        } else {
                             noCommentFound.setVisibility(GONE);
                         }
 
-                        commentTotal.setText(movieResponse.getComments().size()+" Comments");
+                        commentTotal.setText(movieResponse.getComments().size() + " Comments");
 
 
                         addCommentBtn.setOnClickListener(v -> {
 
-                            if (editTextComment.getText()!=null){
+                            if (editTextComment.getText() != null) {
 
-                                mediaRepository.addCommentEpisode(editTextComment.getText().toString(),String.valueOf(id))
+                                mediaRepository.addCommentEpisode(editTextComment.getText().toString(), String.valueOf(id))
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(new Observer<>() {
@@ -2354,7 +2399,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                                                 editTextComment.setText("");
 
 
-                                                mediaRepository.getEpisodesComments(id,settingsManager.getSettings().getApiKey())
+                                                mediaRepository.getEpisodesComments(id, settingsManager.getSettings().getApiKey())
                                                         .subscribeOn(Schedulers.io())
                                                         .observeOn(AndroidSchedulers.mainThread())
                                                         .subscribe(new Observer<>() {
@@ -2368,8 +2413,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                                                             @Override
                                                             public void onNext(@io.reactivex.rxjava3.annotations.NonNull MovieResponse movieResponse) {
 
-                                                                commentsAdapter.addToContent(movieResponse.getComments(),context,authManager,mediaRepository);
-                                                                rvComments.scrollToPosition(Objects.requireNonNull(rvComments.getAdapter()).getItemCount()-1);
+                                                                commentsAdapter.addToContent(movieResponse.getComments(), context, authManager, mediaRepository);
+                                                                rvComments.scrollToPosition(Objects.requireNonNull(rvComments.getAdapter()).getItemCount() - 1);
                                                                 commentsAdapter.notifyDataSetChanged();
                                                             }
 
@@ -2402,7 +2447,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                                         });
 
 
-                            }else {
+                            } else {
 
                                 Toast.makeText(context, R.string.type_to_comment, Toast.LENGTH_SHORT).show();
                             }
@@ -2426,7 +2471,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 });
 
 
-
         dialog.show();
         dialog.getWindow().setAttributes(lp);
 
@@ -2444,21 +2488,21 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
         if (settingsManager.getSettings().getSeparateDownload() == 1) {
 
-            if (episode.getDownloads() !=null && !episode.getDownloads().isEmpty()) {
+            if (episode.getDownloads() != null && !episode.getDownloads().isEmpty()) {
 
                 onLoadEpisodeDownloadInfo(episode, episode.getDownloads());
-            }else {
+            } else {
 
-                DialogHelper.showNoDownloadAvailable(context,context.getString(R.string.about_no_stream_download));
+                DialogHelper.showNoDownloadAvailable(context, context.getString(R.string.about_no_stream_download));
             }
 
-        }else if (episode.getVideos() !=null && !episode.getVideos().isEmpty()) {
+        } else if (episode.getVideos() != null && !episode.getVideos().isEmpty()) {
 
             onLoadEpisodeDownloadInfo(episode, episode.getVideos());
 
-        }else {
+        } else {
 
-            DialogHelper.showNoDownloadAvailableEpisode(context,context.getString(R.string.about_no_stream_download));
+            DialogHelper.showNoDownloadAvailableEpisode(context, context.getString(R.string.about_no_stream_download));
         }
 
     }
@@ -2467,7 +2511,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
     private void onLoadEpisodeDownloadInfo(Episode episode, List<EpisodeStream> downloads) {
 
         String[] charSequence = new String[downloads.size()];
-        for (int i = 0; i<downloads.size(); i++) {
+        for (int i = 0; i < downloads.size(); i++) {
 
             charSequence[i] = downloads.get(i).getServer() + " - " + downloads.get(i).getLang();
 
@@ -2478,21 +2522,21 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         builder.setCancelable(true);
         builder.setItems(charSequence, (dialogInterface, wich) -> {
 
-            if (downloads.get(wich).getEmbed() !=1) {
+            if (downloads.get(wich).getEmbed() != 1) {
 
                 if (settingsManager.getSettings().getAllowAdm() == 1) {
 
 
-                    if (downloads.get(wich).getExternal()  == 1) {
+                    if (downloads.get(wich).getExternal() == 1) {
 
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(downloads.get(wich).getLink())));
 
-                    } else   if (downloads.get(wich).getSupportedHosts() == 1){
+                    } else if (downloads.get(wich).getSupportedHosts() == 1) {
 
 
                         easyPlexSupportedHosts = new EasyPlexSupportedHosts(context);
 
-                        if (settingsManager.getSettings().getHxfileApiKey() !=null && !settingsManager.getSettings().getHxfileApiKey().isEmpty())  {
+                        if (settingsManager.getSettings().getHxfileApiKey() != null && !settingsManager.getSettings().getHxfileApiKey().isEmpty()) {
 
                             easyPlexSupportedHosts.setApikey(settingsManager.getSettings().getHxfileApiKey());
                         }
@@ -2518,7 +2562,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                                         builder.setTitle(context.getString(R.string.select_qualities));
                                         builder.setCancelable(true);
                                         builder.setItems(name, (dialogInterface, i) ->
-                                                onLoadDonwloadFromDialogs(episode,vidURL.get(i).getUrl(),downloads, downloads.get(wich)));
+                                                onLoadDonwloadFromDialogs(episode, vidURL.get(i).getUrl(), downloads, downloads.get(wich)));
 
                                         builder.show();
 
@@ -2528,7 +2572,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
                                 } else {
 
-                                    onLoadDonwloadFromDialogs(episode,vidURL.get(0).getUrl(), downloads, downloads.get(wich));
+                                    onLoadDonwloadFromDialogs(episode, vidURL.get(0).getUrl(), downloads, downloads.get(wich));
                                 }
 
                             }
@@ -2543,27 +2587,26 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                         easyPlexSupportedHosts.find(downloads.get(wich).getLink());
 
 
-                    }else {
+                    } else {
 
-                        onLoadDonwloadFromDialogs(episode,downloads.get(wich).getLink(), downloads, downloads.get(wich));
+                        onLoadDonwloadFromDialogs(episode, downloads.get(wich).getLink(), downloads, downloads.get(wich));
 
                     }
 
 
-
                 } else {
 
-                    if (downloads.get(wich).getExternal()  == 1) {
+                    if (downloads.get(wich).getExternal() == 1) {
 
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(downloads.get(wich).getLink())));
 
-                    } else   if (downloads.get(wich).getSupportedHosts() == 1){
+                    } else if (downloads.get(wich).getSupportedHosts() == 1) {
 
 
                         easyPlexSupportedHosts = new EasyPlexSupportedHosts(context);
 
 
-                        if (settingsManager.getSettings().getHxfileApiKey() !=null && !settingsManager.getSettings().getHxfileApiKey().isEmpty())  {
+                        if (settingsManager.getSettings().getHxfileApiKey() != null && !settingsManager.getSettings().getHxfileApiKey().isEmpty()) {
 
                             easyPlexSupportedHosts.setApikey(settingsManager.getSettings().getHxfileApiKey());
                         }
@@ -2615,7 +2658,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                         easyPlexSupportedHosts.find(downloads.get(wich).getLink());
 
 
-                    }else {
+                    } else {
 
                         onLoadDownloadLink(episode, downloads.get(wich).getLink(), downloads.get(wich));
 
@@ -2624,11 +2667,10 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
                 }
 
 
-            }else {
+            } else {
 
-                DialogHelper.showNoDownloadAvailable(context,context.getString(R.string.about_no_stream_download));
+                DialogHelper.showNoDownloadAvailable(context, context.getString(R.string.about_no_stream_download));
             }
-
 
 
         });
@@ -2641,11 +2683,11 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
 
         String name = "S0" + currentSeasons + "E" + episode.getEpisodeNumber() + " : " + episode.getName();
 
-        FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
-        addDownloadDialog = (AddDownloadDialog)fm.findFragmentByTag(TAG_DOWNLOAD_DIALOG);
+        FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
+        addDownloadDialog = (AddDownloadDialog) fm.findFragmentByTag(TAG_DOWNLOAD_DIALOG);
         if (addDownloadDialog == null) {
             AddInitParams initParams = null;
-            Intent i = ((FragmentActivity)context).getIntent();
+            Intent i = ((FragmentActivity) context).getIntent();
             if (i != null)
                 initParams = i.getParcelableExtra(AddDownloadActivity.TAG_INIT_PARAMS);
             if (initParams == null) {
@@ -2657,8 +2699,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         }
 
 
-
-        download = new Download(String.valueOf(episode.getId()),String.valueOf(episode.getId()),episode.getStillPath(),name,"");
+        download = new Download(String.valueOf(episode.getId()), String.valueOf(episode.getId()), episode.getStillPath(), name, "");
 
         download.setId(String.valueOf(episode.getId()));
         download.setPosterPath(serieCover);
@@ -2693,15 +2734,12 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
     }
 
 
-
-    private void fillInitParams(AddInitParams params, Episode episode, String downloadUrl, EpisodeStream episodeStream)
-    {
+    private void fillInitParams(AddInitParams params, Episode episode, String downloadUrl, EpisodeStream episodeStream) {
 
 
         String ePname = "S0" + currentSeasons + "E" + episode.getEpisodeNumber() + " : " + episode.getName();
 
         String name = "S0" + currentSeasons + "E" + episode.getEpisodeNumber() + "_" + episode.getName();
-
 
 
         SettingsRepository pref = RepositoryHelper.getSettingsRepository(context);
@@ -2722,7 +2760,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         }
 
 
-        if (episodeStream.getUseragent() !=null && !episodeStream.getUseragent().isEmpty()){
+        if (episodeStream.getUseragent() != null && !episodeStream.getUseragent().isEmpty()) {
 
 
             if (params.userAgent == null) {
@@ -2731,7 +2769,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         }
 
 
-        if (episodeStream.getHeader() !=null && !episodeStream.getHeader().isEmpty()){
+        if (episodeStream.getHeader() != null && !episodeStream.getHeader().isEmpty()) {
 
             if (params.refer == null) {
                 params.refer = episodeStream.getHeader();
@@ -2752,7 +2790,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         if (params.mediabackdrop == null) {
             params.mediabackdrop = episode.getStillPath();
         }
-
 
 
         if (params.dirPath == null) {
@@ -2785,7 +2822,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
     }
 
 
-
     private void onLoadDonwloadFromDialogs(Episode episode, String url, List<EpisodeStream> downloads, EpisodeStream episodeStream) {
 
 
@@ -2808,21 +2844,20 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         LinearLayout with1App = dialog.findViewById(R.id.with1DM);
 
         withAdm.setOnClickListener(v12 -> {
-            Tools.downloadFromAdm(context,url,true,media,settingsManager,episode,true);
+            Tools.downloadFromAdm(context, url, true, media, settingsManager, episode, true);
             dialog.dismiss();
 
         });
 
         with1App.setOnClickListener(v12 -> {
-            Tools.downloadFrom1dm(context, url, true, media, settingsManager,episode,true);
+            Tools.downloadFrom1dm(context, url, true, media, settingsManager, episode, true);
             dialog.dismiss();
         });
 
         withApp.setOnClickListener(v12 -> {
-            onLoadDownloadLink(episode,url, episodeStream);
+            onLoadDownloadLink(episode, url, episodeStream);
             dialog.dismiss();
         });
-
 
 
         dialog.show();
@@ -2867,8 +2902,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
         }
 
     }
-
-
 
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {

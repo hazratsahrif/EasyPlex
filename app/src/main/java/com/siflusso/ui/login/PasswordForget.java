@@ -181,50 +181,50 @@ public class PasswordForget extends AppCompatActivity implements HasAndroidInjec
         binding.tokenUserPasswordConfirmation.setError(null);
         validator.clear();
 
-            hideKeyboard();
-            binding.loader.setVisibility(View.VISIBLE);
-            binding.tokenEnter.setVisibility(View.GONE);
+        hideKeyboard();
+        binding.loader.setVisibility(View.VISIBLE);
+        binding.tokenEnter.setVisibility(View.GONE);
 
-            loginViewModel.getPasswordUpdate(token,email,password,passwordConfirmation).observe(PasswordForget.this, login -> {
-
-
-                if (login.status == ErrorHandling.Status.SUCCESS) {
-
-                    final Dialog dialog = new Dialog(this);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-                    dialog.setContentView(R.layout.dialog_password_updated);
-                    dialog.setCancelable(true);
-                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog.getWindow().getAttributes());
-                    lp.width = WRAP_CONTENT;
-                    lp.height = WRAP_CONTENT;
-                    dialog.findViewById(R.id.bt_getcode).setOnClickListener(v -> {
-
-                        startActivity(new Intent(PasswordForget.this, LoginActivity.class));
-                        finish();
-                    });
-                    dialog.findViewById(R.id.bt_close).setOnClickListener(v -> {
-                        startActivity(new Intent(PasswordForget.this, LoginActivity.class));
-                        finish();
-                    });
+        loginViewModel.getPasswordUpdate(token,email,password,passwordConfirmation).observe(PasswordForget.this, login -> {
 
 
-                    dialog.show();
-                    dialog.getWindow().setAttributes(lp);
+            if (login.status == ErrorHandling.Status.SUCCESS) {
+
+                final Dialog dialog = new Dialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                dialog.setContentView(R.layout.dialog_password_updated);
+                dialog.setCancelable(true);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.width = WRAP_CONTENT;
+                lp.height = WRAP_CONTENT;
+                dialog.findViewById(R.id.bt_getcode).setOnClickListener(v -> {
+
+                    startActivity(new Intent(PasswordForget.this, LoginActivity.class));
+                    finish();
+                });
+                dialog.findViewById(R.id.bt_close).setOnClickListener(v -> {
+                    startActivity(new Intent(PasswordForget.this, LoginActivity.class));
+                    finish();
+                });
 
 
-                } else {
-
-                    binding.loader.setVisibility(View.GONE);
-                    binding.tokenEnter.setVisibility(View.VISIBLE);
-                    DialogHelper.erroLogin(this);
+                dialog.show();
+                dialog.getWindow().setAttributes(lp);
 
 
-                }
+            } else {
 
-            });
+                binding.loader.setVisibility(View.GONE);
+                binding.tokenEnter.setVisibility(View.VISIBLE);
+                DialogHelper.erroLogin(this);
+
+
+            }
+
+        });
 
 
     }

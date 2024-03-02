@@ -54,12 +54,7 @@ public class RelatedsAdapter extends RecyclerView.Adapter<RelatedsAdapter.MainVi
     }
 
     class MainViewHolder extends RecyclerView.ViewHolder {
-
-
-
         private final ItemRelatedsBinding binding;
-
-
         MainViewHolder(@NonNull ItemRelatedsBinding binding)
         {
             super(binding.getRoot());

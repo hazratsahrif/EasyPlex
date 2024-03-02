@@ -83,6 +83,7 @@ import com.siflusso.ui.manager.AuthManager;
 import com.siflusso.ui.manager.SettingsManager;
 import com.siflusso.ui.manager.StatusManager;
 import com.siflusso.ui.manager.TokenManager;
+import com.siflusso.ui.more.MoreFragment;
 import com.siflusso.ui.mylist.ListFragment;
 import com.siflusso.ui.player.cast.GoogleServicesHelper;
 import com.siflusso.ui.player.cast.queue.ui.QueueListViewActivity;
@@ -293,9 +294,7 @@ public class BaseActivity extends AppCompatActivity implements Injectable {
 
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-
             permDeniedDialog = (PermissionDeniedDialog)manager.findFragmentByTag(TAG_PERM_DENIED_DIALOG);
-
             permissionManager = new PermissionManager(this, new PermissionManager.Callback() {
                 @Override
                 public void onStorageResult(boolean isGranted, boolean shouldRequestStoragePermission) {
@@ -378,7 +377,7 @@ public class BaseActivity extends AppCompatActivity implements Injectable {
         }
 
 
-        mainBinding.navigation.getMenu().findItem(R.id.navigation_live).setVisible(settingsManager.getSettings().getStreaming() != 0);
+//        mainBinding.navigation.getMenu().findItem(R.id.navigation_live).setVisible(settingsManager.getSettings().getStreaming() != 0);
         mainBinding.navigation.getMenu().findItem(R.id.navigation_download).setVisible(settingsManager.getSettings().getEnableDownload() != 0);
 
 
@@ -737,12 +736,9 @@ public class BaseActivity extends AppCompatActivity implements Injectable {
 
     private void onLoadAdmobBanner() {
 
-
         if (settingsManager.getSettings().getAdBanner() != 1 && settingsManager.getSettings().getAdUnitIdBanner() != null) {
-
             mainBinding.adViewContainer.setVisibility(GONE);
         } else {
-
             adView = new AdView(this);
             adView.setAdUnitId(settingsManager.getSettings().getAdUnitIdBanner());
             mainBinding.adViewContainer.removeAllViews();
@@ -848,7 +844,10 @@ public class BaseActivity extends AppCompatActivity implements Injectable {
         }
     }
 
+    public void changeFragmentWithID() {
 
+        mainBinding.navigation.setSelectedItemId(R.id.navigation_more);
+    }
     public void changeFragment(Fragment fragment, String tagFragmentName) {
 
         FragmentManager mFragmentManager = getSupportFragmentManager();
@@ -890,11 +889,15 @@ public class BaseActivity extends AppCompatActivity implements Injectable {
                             .getSimpleName());
                     break;
 
-
-                case R.id.navigation_live:
-                    changeFragment(new StreamingFragment(), StreamingFragment.class
-                            .getSimpleName());
+                case R.id.navigation_more:
+                    changeFragment(new MoreFragment(), MoreFragment.class.getSimpleName());
                     break;
+
+//                case R.id.navigation_live:
+//                    changeFragment(new StreamingFragment(), StreamingFragment.class
+//                            .getSimpleName());
+//
+//                    break;
 
                 default:
                     changeFragment(new HomeFragment(), HomeFragment.class

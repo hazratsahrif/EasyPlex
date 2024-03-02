@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -68,6 +69,7 @@ import com.stringcare.library.SC;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -145,7 +147,9 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
         super.onCreate(savedInstanceState);
 
 
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        binding.constraintLayout.setVisibility(GONE);
 
 
         loginViewModel = new ViewModelProvider(this, viewModelFactory).get(LoginViewModel.class);
@@ -170,6 +174,21 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
             sharedPreferencesEditor.apply();
 
         }
+
+        binding.btnLoginLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.loginLayout.setVisibility(View.VISIBLE);
+                binding.backgroundLayout.setVisibility(GONE);
+            }
+        });
+        binding.btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.loginLayout.setVisibility(GONE);
+                binding.backgroundLayout.setVisibility(View.VISIBLE);
+            }
+        });
 
 
 
@@ -399,9 +418,11 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
 
 
     void skip(){
+        binding.skipProgressIndicator.setVisibility(View.VISIBLE);
 
         startActivity(new Intent(LoginActivity.this, BaseActivity.class));
         finish();
+        binding.skipProgressIndicator.setVisibility(GONE);
 
 
     }
@@ -619,15 +640,10 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
         String password = binding.tilPassword.getEditText().getText().toString();
         binding.tilEmail.setError(null);
         binding.tilPassword.setError(null);
-        validator.clear();
-
-
         if (validator.validate()) {
-
-
             hideKeyboard();
             binding.formContainer.setVisibility(View.GONE);
-            binding.loader.setVisibility(View.VISIBLE);
+            binding.linearProgressIndicator.setVisibility(View.VISIBLE);
 
             authRepository.getLogin(email, password)
                     .subscribeOn(Schedulers.io())
@@ -652,9 +668,8 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
                         @SuppressLint("ClickableViewAccessibility")
                         @Override
                         public void onError(@NotNull Throwable e) {
-
                             binding.formContainer.setVisibility(View.VISIBLE);
-                            binding.loader.setVisibility(View.GONE);
+                            binding.linearProgressIndicator.setVisibility(View.GONE);
                             DialogHelper.erroLogin(LoginActivity.this);
 
                         }
@@ -667,6 +682,7 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
                         }
                     });
         }
+
 
     }
 

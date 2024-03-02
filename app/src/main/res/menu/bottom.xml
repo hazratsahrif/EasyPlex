@@ -18,13 +18,13 @@
         android:title="@string/discover"
         tools:targetApi="o" />
 
-    <item
-        android:id="@+id/navigation_live"
-        android:icon="@drawable/ic_live"
-        android:iconTint="@color/white"
-        android:menuCategory="secondary"
-        android:title="@string/streaming"
-        tools:targetApi="o" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_live"-->
+<!--        android:icon="@drawable/ic_live"-->
+<!--        android:iconTint="@color/white"-->
+<!--        android:menuCategory="secondary"-->
+<!--        android:title="@string/streaming"-->
+<!--        tools:targetApi="o" />-->
 
 
 
@@ -41,6 +41,13 @@
         android:iconTint="@color/white"
         android:menuCategory="secondary"
         android:title="@string/downloads"
+        tools:targetApi="o" />
+    <item
+        android:id="@+id/navigation_more"
+        android:icon="@drawable/ic_menu"
+        android:iconTint="@color/white"
+        android:menuCategory="secondary"
+        android:title="@string/more"
         tools:targetApi="o" />
 
 

@@ -12,8 +12,6 @@ import java.util.List;
 public class CustomAdapter extends PagerAdapter {
 
     private final List<RecyclerView> recyclerViews;
-
-
     public CustomAdapter(List<RecyclerView> recyclerViews) {
         this.recyclerViews = recyclerViews;
     }
@@ -39,5 +37,18 @@ public class CustomAdapter extends PagerAdapter {
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
+    }
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "Overview";
+            case 1:
+                return "Casts";
+            case 2:
+                return "Related";
+            default:
+                return null;
+        }
     }
 }

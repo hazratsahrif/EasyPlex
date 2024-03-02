@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.borjabravo.readmoretextview.ReadMoreTextView
+        android:id="@+id/text_overview_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:layout_marginTop="16dp"
+        android:text="@string/movie_overview_text"
+        android:textColor="@color/grey_300"
+        app:trimMode="trimModeLength"
+        app:trimLength="175"
+        app:colorClickableText="@color/ddfb4b"
+        android:textSize="12sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Genre"
+        android:layout_marginTop="22dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Genre"
+        android:id="@+id/tvGenre"
+        android:textColor="@color/grey_300"
+        android:textSize="12sp"
+        />
+
+
+</LinearLayout>

@@ -22,12 +22,7 @@
             android:translationZ="0dp"
             app:layout_constraintTop_toTopOf="parent"
             app:elevation="0dp">
-
-
-
         </com.google.android.material.appbar.AppBarLayout>
-
-
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"

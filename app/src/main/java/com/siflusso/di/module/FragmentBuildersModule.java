@@ -12,6 +12,7 @@ import com.siflusso.ui.library.MoviesFragment;
 import com.siflusso.ui.library.NetworksFragment;
 import com.siflusso.ui.library.NetworksFragment2;
 import com.siflusso.ui.library.SeriesFragment;
+import com.siflusso.ui.more.MoreFragment;
 import com.siflusso.ui.mylist.AnimesListFragment;
 import com.siflusso.ui.mylist.ListFragment;
 import com.siflusso.ui.mylist.MoviesListFragment;
@@ -30,7 +31,6 @@ import dagger.android.ContributesAndroidInjector;
  * */
 @Module
 public abstract class FragmentBuildersModule {
-
 
     @ContributesAndroidInjector
     abstract EpisodesFragment contributeEpisodesFragment();
@@ -63,6 +63,9 @@ public abstract class FragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract SeriesFragment contributeSeriesFragment();
+    @ContributesAndroidInjector
+    abstract MoreFragment contributeMoreFragment();
+
 
     @ContributesAndroidInjector
     abstract LibraryFragment contributeLibraryFragment();

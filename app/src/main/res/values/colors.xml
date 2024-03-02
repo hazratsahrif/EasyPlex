@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <color name="iconMaskColor">#46485f</color>
     <color name="iconMaskStrokeColor">#00ffffff</color>
@@ -30,6 +30,7 @@
     <color name="colorAccent">#121212</color>
     <color name="bottomnavigationbgcolor">#1F252E</color>
     <color name="white">#FFFFFF</color>
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#889F9F9F</color>
     <color name="fragment_content_detail_stroke">#1a000000</color>
     <color name="grey_11">#e6e6e6</color>
     <color name="grey_60">#666666</color>
@@ -37,7 +38,7 @@
     <color name="transparent">#00000000</color>
     <color name="fragment_content_detail_overlay_end">#181d25</color>
     <color name="fragment_content_detail_overlay_center">#6626262d</color>
-    <color name="fragment_content_detail_overlay_start">#0026262d</color>
+    <color name="fragment_content_detail_overlay_start">#0026262D</color>
     <color name="fragment_featured_end">#1a1a1a</color>
     <color name="fragment_featured_overlay_center">#6626262d</color>
     <color name="fragment_featured_overlay_start">#0026262d</color>
@@ -118,6 +119,8 @@
     <color name="ok">#20B000</color>
     <color name="ok_light">#9CD791</color>
     <color name="light_green">#DDFB4B</color>
+    <color name="black_80">#CD000000</color>
+    <color name="border_color">#252525</color>
 
 
 </resources>

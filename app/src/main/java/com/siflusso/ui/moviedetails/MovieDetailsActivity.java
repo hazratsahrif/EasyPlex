@@ -42,6 +42,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,12 +67,12 @@ import com.appnext.ads.fullscreen.RewardedVideo;
 import com.appnext.base.Appnext;
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.RewardedVideoCallbacks;
-import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.easyplex.easyplexsupportedhosts.EasyPlexSupportedHosts;
 import com.easyplex.easyplexsupportedhosts.Model.EasyPlexSupportedHostsModel;
-import com.google.android.gms.cast.Cast;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
 import com.siflusso.R;
 import com.siflusso.data.local.entity.Download;
@@ -93,13 +94,13 @@ import com.siflusso.ui.login.LoginActivity;
 import com.siflusso.ui.manager.AuthManager;
 import com.siflusso.ui.manager.SettingsManager;
 import com.siflusso.ui.manager.TokenManager;
-import com.siflusso.ui.moviedetails.adapters.CastAdapter;
 import com.siflusso.ui.moviedetails.adapters.CustomAdapter;
 import com.siflusso.ui.moviedetails.adapters.DownloadsListAdapter;
 import com.siflusso.ui.moviedetails.adapters.MovieCastAdapter;
 import com.siflusso.ui.moviedetails.adapters.MoviePagerAdapter;
-import com.siflusso.ui.moviedetails.adapters.RelatedsAdapter;
+import com.siflusso.ui.moviedetails.adapters.OverviewAdapter;
 import com.siflusso.ui.moviedetails.adapters.RelatedsTabAdapter;
+import com.siflusso.ui.moviedetails.model.OverviewModel;
 import com.siflusso.ui.player.activities.EmbedActivity;
 import com.siflusso.ui.player.cast.GoogleServicesHelper;
 import com.siflusso.ui.player.cast.queue.ui.QueueListViewActivity;
@@ -162,6 +163,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import jp.wasabeef.blurry.Blurry;
 import timber.log.Timber;
 
 /**
@@ -192,6 +194,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private boolean webViewLauched = false;
     private boolean isPagerCalled = false;
     ItemMovieDetailBinding binding;
+
+    private ProgressBar linearProgressIndicator;
 
     @Inject ViewModelProvider.Factory viewModelFactory;
     private MovieDetailViewModel movieDetailViewModel;
@@ -289,7 +293,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private CastStateListener mCastStateListener;
     private MaxRewardedAd maxRewardedAd;
     private Media castObject;
+    MovieCastAdapter adapter1;
+    List<RecyclerView> recyclerViews;
     private RewardedVideo mAppNextAdsVideoRewarded;
+    String overlyText="";
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
 
@@ -362,6 +369,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.item_movie_detail);
 
+
+        linearProgressIndicator = findViewById(R.id.linearProgressIndicator);
+
         mRelatedsAdapter = new RelatedsTabAdapter();
 
 //        setPagerAdapter();
@@ -370,7 +380,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             binding.backbutton.performClick();
             ToastHelper(getApplicationContext(),getString(R.string.vpn_message));
         }
-        onInitRewards();
+//        onInitRewards();
         if (GoogleServicesHelper.available(this)) {
 
             mCastStateListener = newState -> {
@@ -386,10 +396,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieDetailViewModel = new ViewModelProvider(this, viewModelFactory).get(MovieDetailViewModel.class);
         loginViewModel = new ViewModelProvider(this, viewModelFactory).get(LoginViewModel.class);
         mMovie = false;
-        binding.progressBar.setVisibility(View.VISIBLE);
+        //binding.progressBar.setVisibility(View.VISIBLE);
         binding.itemDetailContainer.setVisibility(GONE);
         binding.PlayButtonIcon.setVisibility(GONE);
         binding.serieName.setVisibility(GONE);
+        recyclerViews = new ArrayList<>();
 
 
         Intent appLinkIntent = getIntent();
@@ -466,7 +477,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         if (settingsManager.getSettings().getApplovinInterstitialUnitid() !=null && !settingsManager.getSettings().getApplovinInterstitialUnitid().isEmpty()) {
 
             maxInterstitialAd = new MaxInterstitialAd(settingsManager.getSettings().getApplovinInterstitialUnitid(), this );
-            maxInterstitialAd.loadAd();
+//            maxInterstitialAd.loadAd();
         }
 
         String defaultRewardedNetworkAds = settingsManager.getSettings().getDefaultRewardedNetworkAds();
@@ -547,6 +558,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
 
             onLoadImage(movieDetail.getPosterPath());onLoadTitle(movieDetail.getTitle());
+
+            onLoadImageBack(movieDetail.getBackdropPath());onLoadTitle(movieDetail.getTitle());
+
             try {
                 onLoadDate(movieDetail.getReleaseDate());
             } catch (ParseException e) {
@@ -693,6 +707,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                     DialogHelper.showNoDownloadAvailable(this,getString(R.string.download_disabled));
 
+
+                    binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+
+                    // Hide the progress bar after 3 seconds
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        linearProgressIndicator.setVisibility(View.GONE);
+                    }, 1000); // 3000 milliseconds = 3
+
                 }else    if (movieDetail.getEnableDownload() == 0) {
 
                     Toast.makeText(this, "Download is currently not available for this Media", Toast.LENGTH_SHORT).show();
@@ -701,17 +723,57 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 }else onDownloadMovie(movieDetail);
 
 
+                binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+
+                // Hide the progress bar after 3 seconds
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    linearProgressIndicator.setVisibility(View.GONE);
+                }, 1000); // 3000 milliseconds = 3
+
+
             });
 
-            binding.report.setOnClickListener(v -> onLoadReport(movieDetail.getTitle(),movieDetail.getPosterPath()));
+            LinearProgressIndicator linearProgressIndicator = findViewById(R.id.linearProgressIndicator);
+
+
+
+            binding.report.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("TAG", "onClick: title =" +movieDetail.getTitle()+"  path  "+movieDetail.getPosterPath() );
+                    onLoadReport(movieDetail.getTitle());
+
+                    linearProgressIndicator.setVisibility(View.VISIBLE);
+
+                    // Hide the progress indicators after 3 seconds
+                    new Handler().postDelayed(() -> {
+                        linearProgressIndicator.setVisibility(View.GONE);
+                    }, 1000);
+
+                }
+            });
+
+//            binding.report.setOnClickListener(v -> onLoadReport(movieDetail.getTitle(),movieDetail.getPosterPath()));
 
             binding.ButtonPlayTrailer.setOnClickListener(v -> {
+
+                binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    binding.linearProgressIndicator.setVisibility(View.GONE);
+                }, 1000); // Hide the progress bar after 1 second
 
                 if (movieDetail.getPreviewPath() == null) {
                     ToastHelper(getApplicationContext(),getString(R.string.trailer_not_found));
                     return;
                 }
                 onLoadTrailer(movieDetail.getPreviewPath(), movieDetail.getTitle(), movieDetail.getBackdropPath(), movieDetail.getTrailerUrl());
+
+                linearProgressIndicator.setVisibility(View.VISIBLE);
+
+                // Hide the progress indicators after 3 seconds
+                new Handler().postDelayed(() -> {
+                    linearProgressIndicator.setVisibility(View.GONE);
+                }, 1000);
             });
 
             binding.favoriteIcon.setOnClickListener(view -> {
@@ -734,7 +796,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
                                     @Override
                                     public void onNext(@NotNull StatusFav statusFav) {
 
-                                        ToastHelper(getApplicationContext(),getString(R.string.remove_watch_list));
+                                        binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+                                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                            binding.linearProgressIndicator.setVisibility(View.GONE);
+                                        }, 1000); // Hide the progress bar after 1 second
+
 
                                     }
 
@@ -755,8 +821,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                         isMovieFav = false;
 
-                        binding.favoriteImage.setImageResource(R.drawable.add_from_queue);
+                        binding.favoriteImage.setImageResource(R.drawable.add_list);
 
+                        binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            binding.linearProgressIndicator.setVisibility(View.GONE);
+                        }, 1000); // Hide the progress bar after 1 second
 
                     }else {
 
@@ -774,7 +844,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
                                     @Override
                                     public void onNext(@NotNull StatusFav statusFav) {
 
-                                        ToastHelper(getApplicationContext(),"Added " + movieDetail.getTitle() + " To Watchlist");
+
+                                        linearProgressIndicator.setVisibility(View.VISIBLE);
+
+                                        // Hide the progress indicators after 3 seconds
+                                        new Handler().postDelayed(() -> {
+                                            linearProgressIndicator.setVisibility(View.GONE);
+                                        }, 1000);
 
                                     }
 
@@ -796,7 +872,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                         isMovieFav = true;
 
-                        binding.favoriteImage.setImageResource(R.drawable.ic_in_favorite);
+                        binding.favoriteImage.setImageResource(R.drawable.material_symbols_bookmark);
+
+                        binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            binding.linearProgressIndicator.setVisibility(View.GONE);
+                        }, 1000); // Hide the progress bar after 1 second
+
                     }
 
 
@@ -811,7 +893,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
             checkMediaFavorite(movieDetail);
             if (mediaRepository.hasHistory(Integer.parseInt(movieDetail.getId()))) {
 
-                binding.resumePlay.setVisibility(View.VISIBLE);
+                binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    binding.linearProgressIndicator.setVisibility(View.GONE);
+                }, 1000); // Hide the progress bar after 1 second
 
 
                 binding.resumePlay.setOnClickListener(v -> binding.PlayButtonIcon.performClick());
@@ -828,9 +913,19 @@ public class MovieDetailsActivity extends AppCompatActivity {
             binding.PlayButtonIcon.setOnClickListener(v -> {
 
 
+                binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    binding.linearProgressIndicator.setVisibility(View.GONE);
+                }, 1000); // Hide the progress bar after 1 second
+
+
+
                 if (movieDetail.getEnableStream() !=1) {
 
                     Toast.makeText(this, R.string.stream_is_currently_not_available_for_this_media, Toast.LENGTH_SHORT).show();
+
+
+
                     return;
                 }
 
@@ -846,9 +941,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 }else if (movieDetail.getVideos() !=null && !movieDetail.getVideos().isEmpty()) {
 
 
-                   if (movieDetail.getPremuim() == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
+                    if (movieDetail.getPremuim() == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
 
                         onLoadStream(movieDetail);
+
+
 
                     } else  if (settingsManager.getSettings().getEnableWebview() == 1) {
 
@@ -916,81 +1013,59 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     } else if (movieDetail.getEnableAdsUnlock() ==1){
 
 
-                       onLoadSubscribeDialog(movieDetail,true);
+                        onLoadSubscribeDialog(movieDetail,true);
 
 
-                   } else   if (settingsManager.getSettings().getWachAdsToUnlock() == 1 && movieDetail.getPremuim() != 1 && authManager.getUserInfo().getPremuim() == 0) {
+                    } else   if (settingsManager.getSettings().getWachAdsToUnlock() == 1 && movieDetail.getPremuim() != 1 && authManager.getUserInfo().getPremuim() == 0) {
 
                         onLoadSubscribeDialog(movieDetail,true);
 
                     } else if (settingsManager.getSettings().getWachAdsToUnlock() == 0 && movieDetail.getPremuim() == 0) {
-                       
+
                         onLoadStream(movieDetail);
                     } else if (authManager.getUserInfo().getPremuim() == 1 && movieDetail.getPremuim() == 0) {
 
                         onLoadStream(movieDetail);
 
                     } else {
-
                         DialogHelper.showPremuimWarning(this);
-
                     }
 
                 }else {
 
                     DialogHelper.showNoStreamAvailable(this);
-
                 }
-
-
             });
-
-
             mMovie = true;
             checkAllDataLoaded();
-            setProfilePagerAdapter(movieDetail);
-
+//            setProfilePagerAdapter(movieDetail);
         });
-
-
-
     }
-
-
-    private void setProfilePagerAdapter(Media media) {
-
-        MovieCastAdapter adapter1 = onLoadCast(media);
-        adapter1.addCasts(media.getCast());
-        Toast.makeText(this,"Media"+media.getCast().size(),Toast.LENGTH_SHORT).show();
+    private void setProfilePagerAdapter() {
+        binding.tabProgressBar.setVisibility(GONE);
+        recyclerViews.clear();
         RelatedsTabAdapter adapter2 = onLoadRelatedsMovies();
-        // Create a list of RecyclerViews
-        List<RecyclerView> recyclerViews = new ArrayList<>();
+//        Toast.makeText(this, "OverLayText"+overlyText, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "GET OverLayText"+binding.textOverviewLabel.getText(), Toast.LENGTH_SHORT).show();
+        OverviewModel model = new OverviewModel(overlyText,binding.mgenres.getText().toString());
+        OverviewAdapter adapter3 = new OverviewAdapter(this,model);
+        recyclerViews.add(createRecyclerView(adapter3));
         recyclerViews.add(createRecyclerView(adapter1));
         recyclerViews.add(createRecyclerView(adapter2));
         pagerAdapter = new CustomAdapter(recyclerViews);
-        TabLayout.Tab tab1 = binding.tabLayout.newTab();
-        TabLayout.Tab tab2 = binding.tabLayout.newTab();
-        tab1.setText("Casts");
-        tab2.setText("Related");
-        binding.tabLayout.addTab(tab1);
-        binding.tabLayout.addTab(tab2);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
-
         binding.viewPager.setAdapter(pagerAdapter);
-
         // Add ViewPager change listener
         binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 // Do nothing
             }
-
             @Override
             public void onPageSelected(int position) {
                 // Called when a new page becomes selected
                 binding.tabLayout.setScrollPosition(position, 0f, true);
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
                 // Do nothing
@@ -1068,9 +1143,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
             @Override
             public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
-
-                //
-
             }
 
             @Override
@@ -1290,13 +1362,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                     isMovieFav = true;
 
-                    binding.favoriteImage.setImageResource(R.drawable.ic_in_favorite);
+                    binding.favoriteImage.setImageResource(R.drawable.material_symbols_bookmark);
 
                 } else {
 
                     isMovieFav = false;
 
-                    binding.favoriteImage.setImageResource(R.drawable.add_from_queue);
+                    binding.favoriteImage.setImageResource(R.drawable.add_list);
 
                 }});
 
@@ -1317,7 +1389,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void onLoadViews(String views) {
 
-        binding.viewMovieViews.setText(getString(R.string.views)+ getViewFormat(Integer.parseInt(views)));
+        //  binding.viewMovieViews.setText(getString(R.string.views)+ getViewFormat(Integer.parseInt(views)));
 
     }
 
@@ -1497,7 +1569,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                         binding.epResumeTitle.setText(media.getTitle());
 
-                        binding.timeRemaning.setText(getProgressTime((resumeInfo.getMovieDuration() - resumeInfo.getResumePosition()), true));
+                        //       binding.timeRemaning.setText(getProgressTime((resumeInfo.getMovieDuration() - resumeInfo.getResumePosition()), true));
 
                         binding.resumeProgressBar.setProgress((int) moveProgress);
 
@@ -1513,13 +1585,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
 
                         binding.resumeProgressBar.setVisibility(View.VISIBLE);
-                        binding.timeRemaning.setVisibility(View.VISIBLE);
+                        // binding.timeRemaning.setVisibility(View.VISIBLE);
                         binding.resumeLinear.setVisibility(View.VISIBLE);
 
                     }else {
 
                         binding.resumeProgressBar.setVisibility(GONE);
-                        binding.timeRemaning.setVisibility(GONE);
+                        // b   binding.timeRemaning.setVisibility(GONE);
                         binding.resumeLinear.setVisibility(GONE);
                     }
 
@@ -1527,7 +1599,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
 
                     binding.resumeProgressBar.setVisibility(GONE);
-                    binding.timeRemaning.setVisibility(GONE);
+                    // b    binding.timeRemaning.setVisibility(GONE);
                     binding.resumeLinear.setVisibility(GONE);
                     binding.resumeProgressCheck.setVisibility(GONE);
                 }
@@ -1552,7 +1624,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     double moveProgress = d * 100 / resume.getMovieDuration();
                     binding.epResumeTitle.setText(media.getTitle());
 
-                    binding.timeRemaning.setText(getProgressTime((resume.getMovieDuration() - resume.getResumePosition()), true));
+                    // b     binding.timeRemaning.setText(getProgressTime((resume.getMovieDuration() - resume.getResumePosition()), true));
                     binding.resumeProgressBar.setProgress((int) moveProgress);
 
                 }else {
@@ -1569,13 +1641,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
 
                     binding.resumeProgressBar.setVisibility(View.VISIBLE);
-                    binding.timeRemaning.setVisibility(View.VISIBLE);
+                    // b binding.timeRemaning.setVisibility(View.VISIBLE);
                     binding.resumeLinear.setVisibility(View.VISIBLE);
 
                 }else {
 
                     binding.resumeProgressBar.setVisibility(GONE);
-                    binding.timeRemaning.setVisibility(GONE);
+                    // b   binding.timeRemaning.setVisibility(GONE);
                     binding.resumeLinear.setVisibility(GONE);
                 }
 
@@ -1598,66 +1670,66 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void onDownloadMovie(Media media) {
+    private void onDownloadMovie(final Media media) {
+
+        final Dialog chooseQualityDialog = new Dialog(this);
+        chooseQualityDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        chooseQualityDialog.setContentView(R.layout.dialog_choose_quality);
+        chooseQualityDialog.setCancelable(false);
+        chooseQualityDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        chooseQualityDialog.show();
+
+        // Dismiss dialog after 2 seconds
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (chooseQualityDialog.isShowing()) {
+                    chooseQualityDialog.dismiss();
+                    // Proceed with the rest of the logic after the dialog is dismissed
+                    proceedWithDownload(media);
+                }
+            }
+        }, 1000);
 
 
+    }
+
+    private void proceedWithDownload(Media media) {
+        // Your existing download logic goes here
         if (settingsManager.getSettings().getSeparateDownload() == 1) {
-
-            if (media.getDownloads() !=null && !media.getDownloads().isEmpty()) {
-
+            if (media.getDownloads() != null && !media.getDownloads().isEmpty()) {
                 String defaultDownloadsOptions = settingsManager.getSettings().getDefaultDownloadsOptions();
                 if ("Free".equals(defaultDownloadsOptions)) {
-
                     onLoadDownloadsList(media);
-
                 } else if ("PremuimOnly".equals(defaultDownloadsOptions)) {
-
                     if (media.getPremuim() == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
-
                         onLoadDownloadsList(media);
-
                     } else if (media.getPremuim() == 0 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
-
                         onLoadDownloadsList(media);
-
-                    }  else   {
-
+                    } else {
                         DialogHelper.showPremuimWarning(this);
                     }
                 } else if ("WithAdsUnlock".equals(defaultDownloadsOptions)) {
-
                     if (media.getPremuim() == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
-
                         onLoadDownloadsList(media);
-
                     } else if (media.getPremuim() == 0 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
-
                         onLoadDownloadsList(media);
-
-                    }else if (settingsManager.getSettings().getEnableWebview() == 1) {
-
-
+                    } else if (settingsManager.getSettings().getEnableWebview() == 1) {
                         final Dialog dialog = new Dialog(this);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setContentView(R.layout.episode_webview);
                         dialog.setCancelable(false);
                         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
                         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                         lp.copyFrom(dialog.getWindow().getAttributes());
-
                         lp.gravity = Gravity.BOTTOM;
                         lp.width = MATCH_PARENT;
                         lp.height = MATCH_PARENT;
-
-
                         mCountDownTimer = new CountDownTimer(DEFAULT_WEBVIEW_ADS_RUNNING, 1000) {
                             @SuppressLint({"SetTextI18n", "SetJavaScriptEnabled"})
                             @Override
                             public void onTick(long millisUntilFinished) {
-
                                 if (!webViewLauched) {
-
                                     WebView webView = dialog.findViewById(R.id.webViewVideoBeforeAds);
                                     webView.getSettings().setJavaScriptEnabled(true);
                                     webView.setWebViewClient(new WebViewClient());
@@ -1666,100 +1738,61 @@ public class MovieDetailsActivity extends AppCompatActivity {
                                     webSettings.setSupportMultipleWindows(false);
                                     webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
                                     if (settingsManager.getSettings().getWebviewLink() != null && !settingsManager.getSettings().getWebviewLink().isEmpty()) {
-
                                         webView.loadUrl(settingsManager.getSettings().getWebviewLink());
                                     } else {
-
                                         webView.loadUrl(SERVER_BASE_URL + WEBVIEW);
                                     }
-
                                     webViewLauched = true;
                                 }
-
                             }
 
                             @Override
                             public void onFinish() {
-
                                 dialog.dismiss();
                                 onLoadDownloadsList(media);
                                 webViewLauched = false;
-
                                 if (mCountDownTimer != null) {
-
                                     mCountDownTimer.cancel();
                                     mCountDownTimer = null;
-
                                 }
                             }
-
                         }.start();
-
-
                         dialog.show();
                         dialog.getWindow().setAttributes(lp);
-
-
-                    }else {
-                        onLoadSubscribeDialog(media,false); }
-
+                    } else {
+                        onLoadSubscribeDialog(media, false);
+                    }
                 }
-
-            }else {
-
-
-                DialogHelper.showNoDownloadAvailable(this,getString(R.string.about_no_stream_download));
-
+            } else {
+                DialogHelper.showNoDownloadAvailable(this, getString(R.string.about_no_stream_download));
             }
-
-
-        }else {
-
-            if (media.getVideos() !=null && !media.getVideos().isEmpty()) {
-
+        } else {
+            if (media.getVideos() != null && !media.getVideos().isEmpty()) {
                 String defaultDownloadsOptions = settingsManager.getSettings().getDefaultDownloadsOptions();
                 if ("Free".equals(defaultDownloadsOptions)) {
                     onLoadDownloadsList(media);
                 } else if ("PremuimOnly".equals(defaultDownloadsOptions)) {
                     if (media.getPremuim() == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
-
                         onLoadDownloadsList(media);
-
                     } else if (media.getPremuim() == 0 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
-
                         onLoadDownloadsList(media);
-
-                    }  else   {
-
+                    } else {
                         DialogHelper.showPremuimWarning(this);
                     }
                 } else if ("WithAdsUnlock".equals(defaultDownloadsOptions)) {
-
                     if (media.getPremuim() == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
-
                         onLoadDownloadsList(media);
-
                     } else if (media.getPremuim() == 0 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
-
                         onLoadDownloadsList(media);
-
                     } else {
-
-                        onLoadSubscribeDialog(media,false);
-
+                        onLoadSubscribeDialog(media, false);
                     }
                 }
-
-            }else {
-
-                DialogHelper.showNoDownloadAvailable(this,getString(R.string.about_no_stream_download));
-
+            } else {
+                DialogHelper.showNoDownloadAvailable(this, getString(R.string.about_no_stream_download));
             }
         }
-
     }
-
-
 
 
     private void onLoadDownloadsList(Media media) {
@@ -2382,7 +2415,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     // Send report for this Movie
-    private void onLoadReport(String title,String posterpath) {
+    private void onLoadReport(String title) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_report);
@@ -2400,45 +2433,23 @@ public class MovieDetailsActivity extends AppCompatActivity {
         EditText editTextMessage = dialog.findViewById(R.id.et_post);
         TextView reportMovieName = dialog.findViewById(R.id.movietitle);
         ImageView imageView = dialog.findViewById(R.id.image_movie_poster);
-        ImageView smallImageView = dialog.findViewById(R.id.small_cover_img);
-        smallImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MovieDetailsActivity.this, "Image click", Toast.LENGTH_SHORT).show();
-                        
-            }
-        });
+//        ImageView smallImageView = dialog.findViewById(R.id.small_cover_img);
 
 
         reportMovieName.setText(title);
-        onLoadMediaCover(this,smallImageView,posterpath);
-        onLoadMediaCoverSmall(this,imageView,posterpath);
-
-
+//         onLoadMediaCover(this,imageView,posterpath);
         dialog.findViewById(R.id.bt_close).setOnClickListener(v -> dialog.dismiss());
         dialog.findViewById(R.id.view_report).setOnClickListener(v -> {
 
             editTextMessage.getText();
-
             if (editTextMessage.getText() !=null) {
-
                 movieDetailViewModel.sendReport(title,editTextMessage.getText().toString());
                 movieDetailViewModel.reportMutableLiveData.observe(MovieDetailsActivity.this, report -> {
-
                     if (report !=null) {
-
                         dialog.dismiss();
-
                         ToastHelper(getApplicationContext(),getString(R.string.report_sent));
-
                     }
-
-
-                });
-
-            }
-
-
+                });}
         });
 
         dialog.show();
@@ -2451,33 +2462,26 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     }
 
-
-    // Handle Favorite Button Click to add or remove the from MyList
     public void onFavoriteClick(Media mediaDetail) {
-
-
         if (mediaRepository.isMovieFavorite(Integer.parseInt(mediaDetail.getId()))) {
-
-            Timber.i("Removed From Watchlist");
+            // If the media is already a favorite
             movieDetailViewModel.removeFavorite(mediaDetail);
-
-            binding.favoriteImage.setImageResource(R.drawable.add_from_queue);
-
-            ToastHelper(getApplicationContext(),getString(R.string.removed_mylist) + mediaDetail.getTitle());
-
-
-        }else {
-
-            Timber.i("Added To Watchlist");
+            binding.favoriteImage.setImageResource(R.drawable.add_list);
+            binding.favoriteText.setText("Aggiungi"); // Set the text to "Aggiungi"
+            binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                binding.linearProgressIndicator.setVisibility(View.GONE);
+            }, 1000); // Hide the progress bar after 1 second
+        } else {
+            // If the media is not a favorite
             movieDetailViewModel.addFavorite(mediaDetail);
-
             binding.favoriteImage.setImageResource(R.drawable.material_symbols_bookmark);
-
-            ToastHelper(getApplicationContext(),getString(R.string.added_mylist) + mediaDetail.getTitle());
-
-
+            binding.favoriteText.setText("Aggiunto"); // Set the text to "Aggiunto"
+            binding.linearProgressIndicator.setVisibility(View.VISIBLE);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                binding.linearProgressIndicator.setVisibility(View.GONE);
+            }, 1000); // Hide the progress bar after 1 second
         }
-
     }
 
 
@@ -2489,14 +2493,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
         if (settingsManager.getSettings().getDefaultCastOption() !=null && settingsManager.getSettings().getDefaultCastOption().equals("IMDB")){
             if (media.getTmdbId() !=null) {
 
+
                 mCastAdapter = new MovieCastAdapter(settingsManager,this, false);
                 movieDetailViewModel.getMovieCast(Integer.parseInt(media.getTmdbId()));
                 movieDetailViewModel.movieCreditsMutableLiveData.observe(this, credits -> {
                     mCastAdapter = new MovieCastAdapter(settingsManager,this, false);
                     mCastAdapter.addCasts(credits.getCasts());
+                    adapter1 = mCastAdapter;
+                    setProfilePagerAdapter();
+//                    binding.recyclerViewCastMovieDetail.setAdapter(mCastAdapter);
 
-                    // Starring RecycleView
-                    binding.recyclerViewCastMovieDetail.setAdapter(mCastAdapter);
                     Log.d("TAG", "Called Pager Adapter");
 
 
@@ -2514,7 +2520,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
         else {
             mCastAdapter = new MovieCastAdapter(settingsManager,this, true);
             mCastAdapter.addCasts(media.getCast());
-            binding.recyclerViewCastMovieDetail.setAdapter(mCastAdapter);
+            adapter1 = mCastAdapter;
+            setProfilePagerAdapter();
+//            recyclerViews.add(createRecyclerView(adapter1));
+
+//            binding.recyclerViewCastMovieDetail.setAdapter(mCastAdapter);
 
         }
         return mCastAdapter;
@@ -2646,7 +2656,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         dialog.findViewById(R.id.bt_close).setOnClickListener(x ->
 
-        dialog.dismiss());
+                dialog.dismiss());
 
         dialog.show();
         dialog.getWindow().setAttributes(lp);
@@ -2985,7 +2995,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         binding.backbutton.setOnClickListener(v -> {
             onBackPressed();
-            Animatoo.animateSplit(MovieDetailsActivity.this);
+            //     Animatoo.animateSplit(MovieDetailsActivity.this);
 
         });
     }
@@ -3012,12 +3022,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     // Display Movie Poster
     private void onLoadImage(String imageURL){
 
-        GlideApp.with(getApplicationContext()).asBitmap().load(imageURL)
-                .fitCenter()
-                .placeholder(R.color.fragment_content_detail_overlay_end)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .transition(withCrossFade())
-                .into(binding.imageMoviePoster);
+
         GlideApp.with(getApplicationContext()).asBitmap().load(imageURL)
                 .fitCenter()
 //                .placeholder(R.color.fragment_content_detail_overlay_end)
@@ -3026,9 +3031,23 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .into(binding.smallCoverImg);
 
 
-        //Blurry.with(this).capture(binding.imageMoviePoster).into(binding.imageMoviePoster);
+
+
+        Blurry.with(this).capture(binding.imageMoviePoster).into(binding.imageMoviePoster);
     }
 
+
+    private void onLoadImageBack (String imageURL){
+
+        GlideApp.with(getApplicationContext()).asBitmap().load(imageURL)
+                .fitCenter()
+                .placeholder(R.color.fragment_content_detail_overlay_end)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .transition(withCrossFade())
+                .into(binding.imageMoviePoster);
+
+        //Blurry.with(this).capture(binding.imageMoviePoster).into(binding.imageMoviePoster);
+    }
     // Display Movie Title
     private void onLoadTitle(String title){
 
@@ -3051,7 +3070,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     // Display Movie Synopsis or Overview
     private void onLoadSynopsis(String synopsis){
+        overlyText = synopsis;
         binding.textOverviewLabel.setText(synopsis);
+
     }
 
 
@@ -3069,7 +3090,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         if (mMovie && binding !=null ) {
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                binding.progressBar.setVisibility(GONE);
+                //   binding.progressBar.setVisibility(GONE);
                 binding.itemDetailContainer.setVisibility(View.VISIBLE);
                 binding.PlayButtonIcon.setVisibility(View.VISIBLE);
                 binding.serieName.setVisibility(View.VISIBLE);
@@ -3149,8 +3170,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
-
     private void hideKeyboard() {
         View view = this.getCurrentFocus();
         if (view != null) {

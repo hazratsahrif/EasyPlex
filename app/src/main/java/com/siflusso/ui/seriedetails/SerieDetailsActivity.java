@@ -49,6 +49,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdViewAdListener;
@@ -94,6 +95,11 @@ import com.siflusso.ui.manager.AuthManager;
 import com.siflusso.ui.manager.SettingsManager;
 import com.siflusso.ui.manager.TokenManager;
 import com.siflusso.ui.moviedetails.adapters.CastAdapter;
+import com.siflusso.ui.moviedetails.adapters.CustomAdapter;
+import com.siflusso.ui.moviedetails.adapters.MovieCastAdapter;
+import com.siflusso.ui.moviedetails.adapters.OverviewAdapter;
+import com.siflusso.ui.moviedetails.adapters.RelatedsTabAdapter;
+import com.siflusso.ui.moviedetails.model.OverviewModel;
 import com.siflusso.ui.player.activities.EasyPlexMainPlayer;
 import com.siflusso.ui.player.activities.EasyPlexPlayerActivity;
 import com.siflusso.ui.player.activities.EmbedActivity;
@@ -207,7 +213,9 @@ public class SerieDetailsActivity extends AppCompatActivity {
     private com.google.android.gms.ads.nativead.NativeAd mNativeAd;
     private MediaView nativeAdMedia;
     private NativeAd nativeAd;
+    CustomAdapter pagerAdapter;
     private MaxAdView maxAdView;
+    MovieCastAdapter sCastAdapter;
     private MaxNativeAdLoader nativeAdLoader;
     private MaxAd maxAd;
     private BannerView bottomBanner;
@@ -267,7 +275,8 @@ public class SerieDetailsActivity extends AppCompatActivity {
     @Inject
     @Named("cuepoint")
     String cuePoint;
-
+    MovieCastAdapter adapter1;
+    List<RecyclerView> recyclerViews;
     @Inject
     @Named("cuepointY")
     String cuePointY;
@@ -383,7 +392,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
         serieDetailsBinding = DataBindingUtil.setContentView(this,R.layout.serie_details);
 
-
+        recyclerViews = new ArrayList<>();
         if (authManager.getUserInfo().getPremuim() != 1 ) {
 
             onInitRewards();
@@ -414,8 +423,8 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
 
         mSerieLoaded = false;
-        serieDetailsBinding.progressBar.setVisibility(View.VISIBLE);
-        serieDetailsBinding.scrollView.setVisibility(GONE);
+        serieDetailsBinding.linearProgressIndicator.setVisibility(View.VISIBLE);
+//        serieDetailsBinding.scrollView.setVisibility(GONE);
 
 
         // ViewModel to cache, retrieve data for Serie Details
@@ -507,6 +516,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
         serieDetailsBinding.recyclerViewCastMovieDetail.setNestedScrollingEnabled(false);
         serieDetailsBinding.recyclerViewCastMovieDetail.setLayoutManager(new LinearLayoutManager(SerieDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false));
         serieDetailsBinding.recyclerViewCastMovieDetail.addItemDecoration(new SpacingItemDecoration(1, Tools.dpToPx(this, 0), true));
+
     }
 
 
@@ -549,7 +559,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
 
 
-                        Tools.onLoadSnakeBar(this,serieDetailsBinding.constraintLayout);
+//                        Tools.onLoadSnakeBar(this,serieDetailsBinding.constraintLayout);
 
                     }
 
@@ -626,26 +636,26 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
 
 
-                serieDetailsBinding.scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
-                    int scrollY =  serieDetailsBinding.scrollView.getScrollY();
-                    int color = Color.parseColor("#E6070707"); // ideally a global variable
-                    if (scrollY < 256) {
-                        int alpha = (scrollY << 24) | (-1 >>> 8) ;
-                        color &= (alpha);
-
-                        serieDetailsBinding.serieName.setText("");
-                        serieDetailsBinding.serieName.setVisibility(View.GONE);
-
-
-                    }else {
-
-                        serieDetailsBinding.serieName.setText(serieDetail.getName());
-                        serieDetailsBinding.serieName.setVisibility(View.VISIBLE);
-
-                    }
-                    serieDetailsBinding.toolbar.setBackgroundColor(color);
-
-                });
+//                serieDetailsBinding.scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+//                    int scrollY =  serieDetailsBinding.scrollView.getScrollY();
+//                    int color = Color.parseColor("#E6070707"); // ideally a global variable
+//                    if (scrollY < 256) {
+//                        int alpha = (scrollY << 24) | (-1 >>> 8) ;
+//                        color &= (alpha);
+//
+//                        serieDetailsBinding.serieName.setText("");
+//                        serieDetailsBinding.serieName.setVisibility(View.GONE);
+//
+//
+//                    }else {
+//
+//                        serieDetailsBinding.serieName.setText(serieDetail.getName());
+//                        serieDetailsBinding.serieName.setVisibility(View.VISIBLE);
+//
+//                    }
+//                    serieDetailsBinding.toolbar.setBackgroundColor(color);
+//
+//                });
 
                 onLoadToolbar();
 
@@ -1056,7 +1066,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
             if (history !=null) {
 
                 serieDetailsBinding.resumePlay.setVisibility(View.VISIBLE);
-                serieDetailsBinding.resumePlayTitle.setText(history.getTitle());
+//                serieDetailsBinding.resumePlayTitle.setText(history.getTitle());
 
                 if (settingsManager.getSettings().getResumeOffline() == 1 && history.getEpisodeId() !=null) {
 
@@ -1506,19 +1516,39 @@ public class SerieDetailsActivity extends AppCompatActivity {
         if (settingsManager.getSettings().getDefaultCastOption().equals("IMDB")){
 
             if (serieDetail.getTmdbId() !=null) {
-
                internal = false;
-
                 mCastAdapter = new CastAdapter(settingsManager,this, false);
-
                 serieDetailViewModel.getSerieCast(Integer.parseInt(serieDetail.getTmdbId()));
                 serieDetailViewModel.serieCreditsMutableLiveData.observe(this, credits -> {
-
                     mCastAdapter = new CastAdapter(settingsManager,this, internal);
                     mCastAdapter.addCasts(credits.getCasts());
                     // Starring RecycleView
                     serieDetailsBinding.recyclerViewCastMovieDetail.setAdapter(mCastAdapter);
+
+
+
                 });
+
+
+                sCastAdapter = new MovieCastAdapter(settingsManager,this, false);
+
+                serieDetailViewModel.getSerieCast(Integer.parseInt(serieDetail.getTmdbId()));
+                serieDetailViewModel.serieCreditsMutableLiveData.observe(this, credits -> {
+                    sCastAdapter = new MovieCastAdapter(settingsManager,this, internal);
+                    sCastAdapter.addCasts(credits.getCasts());
+                    // Starring RecycleView
+
+                    adapter1 = sCastAdapter;
+                    setProfilePagerAdapter();
+
+
+
+                });
+
+
+
+
+
             }
 
         }else {
@@ -1534,6 +1564,44 @@ public class SerieDetailsActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void setProfilePagerAdapter() {
+        serieDetailsBinding.linearProgressIndicator.setVisibility(GONE);
+        recyclerViews.clear();
+        OverviewModel model = new OverviewModel(serieDetailsBinding.serieOverview.getText().toString(),serieDetailsBinding.mgenres.getText().toString());
+        OverviewAdapter adapter3 = new OverviewAdapter(this,model);
+        recyclerViews.add(createRecyclerView(adapter1));
+        recyclerViews.add(createRecyclerView(adapter3));
+        recyclerViews.add(createRecyclerView(mEpisodesSerieAdapter));
+        pagerAdapter = new CustomAdapter(recyclerViews);
+        serieDetailsBinding.tabLayout.setupWithViewPager(serieDetailsBinding.viewPager);
+        serieDetailsBinding.viewPager.setAdapter(pagerAdapter);
+        // Add ViewPager change listener
+        serieDetailsBinding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                // Do nothing
+            }
+            @Override
+            public void onPageSelected(int position) {
+                // Called when a new page becomes selected
+                serieDetailsBinding.tabLayout.setScrollPosition(position, 0f, true);
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // Do nothing
+            }
+        });
+    }
+
+    private RecyclerView createRecyclerView(RecyclerView.Adapter adapter) {
+        RecyclerView recyclerView = new RecyclerView(this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+        return recyclerView;
     }
 
     private void onLoadAdmobNativeAds() {
@@ -2944,10 +3012,30 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
         if (serieDetail.getSeasons() !=null && !serieDetail.getSeasons().isEmpty()) {
 
-            serieDetailsBinding.mseason.setText(SEASONS + serieDetail.getSeasons().size());
+            List<Season> spinnerItems = serieDetail.getSeasons();
+            Season season = spinnerItems.get(0);
+            String episodeId = String.valueOf(season.getId());
+            String currentSeason = season.getName();
+            String seasonNumber = season.getSeasonNumber();
+            Toast.makeText(this, "Season epsodoe Length"+season.getEpisodes().size(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Serial Details "+serieDetail.getName(), Toast.LENGTH_SHORT).show();
+            serieDetailsBinding.recyclerViewEpisodes.setLayoutManager(new LinearLayoutManager(SerieDetailsActivity.this));
+                    serieDetailsBinding.recyclerViewEpisodes.setHasFixedSize(true);
 
+            mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
+                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail,spinnerItems);
+
+                    mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
+                    serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
+
+
+            /////////  OLD /////
+            serieDetailsBinding.mseason.setText(SEASONS + serieDetail.getSeasons().size());
             serieDetailsBinding.planetsSpinner.setItem(serieDetail.getSeasons());
             serieDetailsBinding.planetsSpinner.setSelection(0);
+
+
+
             serieDetailsBinding.planetsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -2967,7 +3055,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
                     serieDetailsBinding.recyclerViewEpisodes.setHasFixedSize(true);
 
                     mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
-                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId);
+                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail,spinnerItems);
 
                     mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
                     serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
@@ -3074,6 +3162,12 @@ public class SerieDetailsActivity extends AppCompatActivity {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .transition(withCrossFade())
                 .into(serieDetailsBinding.imageMoviePoster);
+        GlideApp.with(getApplicationContext()).asBitmap().load(imageURL)
+                .fitCenter()
+//                .placeholder(R.color.fragment_content_detail_overlay_end)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .transition(withCrossFade())
+                .into(serieDetailsBinding.smallCoverImg);
 
     }
 
@@ -3507,7 +3601,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 serieDetailsBinding.progressBar.setVisibility(View.GONE);
-                serieDetailsBinding.scrollView.setVisibility(View.VISIBLE);
+//                serieDetailsBinding.scrollView.setVisibility(View.VISIBLE);
             },300);
 
         }

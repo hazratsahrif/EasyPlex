@@ -1,5 +1,6 @@
 package com.siflusso.ui.profile;
 
+import static com.basgeekball.awesomevalidation.ValidationStyle.TEXT_INPUT_LAYOUT;
 import static com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade;
 import static com.siflusso.util.Constants.SERVER_BASE_URL;
 import static java.util.Objects.requireNonNull;
@@ -62,31 +63,17 @@ import okhttp3.RequestBody;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-
-
     ActivityEditProfileBinding binding;
-
     private static final int GALLERY_IMAGE_REQ_CODE = 102;
-
     @Inject
     ViewModelProvider.Factory viewModelFactory;
-
-
-
     @Inject
     SettingsManager settingsManager;
-
     private LoginViewModel loginViewModel;
-
-
     @Inject
     AuthRepository authRepository;
-
-
     @Inject
     AuthManager authManager;
-
-
     AwesomeValidation validator;
 
 
@@ -101,9 +88,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_edit_profile);
 
-
-
-        onLoadSplashImage();
+//        onLoadSplashImage();
 
         // LoginViewModel to cache, retrieve data for Authenticated User
         loginViewModel = new ViewModelProvider(this, viewModelFactory).get(LoginViewModel.class);
@@ -111,14 +96,13 @@ public class EditProfileActivity extends AppCompatActivity {
         onCheckAuthenticatedUser();
 
         onHideTaskBar();
-
+        onLoadValitator();
         setupRules();
 
         binding.closeProfileFragment.setOnClickListener(v -> finish());
 
-
-
-        binding.btnUploadAvatar.setOnClickListener(view -> pickProfileImage());
+        binding.userAvatar.setOnClickListener(view -> pickProfileImage());
+//        binding.btnUploadAvatar.setOnClickListener(view -> pickProfileImage());
         binding.btnUpdate.setOnClickListener(view -> register());
 
     }
@@ -129,16 +113,16 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
 
-    private void onLoadSplashImage() {
-
-        GlideApp.with(getApplicationContext()).asBitmap().load(settingsManager.getSettings().getSplashImage())
-                .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .transition(withCrossFade())
-                .skipMemoryCache(true)
-                .into(binding.splashImage);
-
-    }
+//    private void onLoadSplashImage() {
+//
+//        GlideApp.with(getApplicationContext()).asBitmap().load(settingsManager.getSettings().getSplashImage())
+//                .fitCenter()
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .transition(withCrossFade())
+//                .skipMemoryCache(true)
+//                .into(binding.splashImage);
+//
+//    }
 
     private void onCheckAuthenticatedUser() {
 
@@ -270,8 +254,13 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
     }
+    private void onLoadValitator() {
+        validator = new AwesomeValidation(TEXT_INPUT_LAYOUT);
+        validator.setTextInputLayoutErrorTextAppearance(R.style.TextInputLayoutErrorStyle);
+    }
 
     void register(){
+
 
         String name = requireNonNull(binding.tilName.getEditText()).getText().toString();
         String email = requireNonNull(binding.tilEmail.getEditText()).getText().toString();
@@ -283,9 +272,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if (validator.validate()) {
             showLoading();
-
-
-
             if (password.isEmpty()) {
 
                 loginViewModel.updateUser(name,email).observe(this, login -> {

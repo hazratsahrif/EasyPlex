@@ -30,10 +30,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import javax.inject.Inject;
 
 public class ListFragment extends Fragment implements Injectable {
-
     BrowseFragmentBinding binding;
-
-
     @Inject
     SettingsRepository authRepository;
 
@@ -53,11 +50,7 @@ public class ListFragment extends Fragment implements Injectable {
         onSetupTabs();
 
         setHasOptionsMenu(true);
-
-
-
         return binding.getRoot();
-
 
     }
 

@@ -859,5 +859,6 @@
     <string name="movie">Movie ⦿ </string>
     <string name="date">Date ⦿ </string>
     <string name="type">Type ⦿ </string>
+    <string name="more">More</string>
 
 </resources>

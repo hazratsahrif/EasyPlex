@@ -1,5 +1,6 @@
 package com.siflusso.ui.register;
 
+import static com.basgeekball.awesomevalidation.ValidationStyle.TEXT_INPUT_LAYOUT;
 import static com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade;
 
 import android.annotation.SuppressLint;
@@ -103,12 +104,18 @@ public class RegisterActivity extends AppCompatActivity implements Injectable {
 
         setupRules();
         onLoadAppLogo();
+        onLoadValitator();
         onLoadSplashImage();
 
 
         binding.btnRegister.setOnClickListener(v -> register());
         binding.goToLogin.setOnClickListener(v -> login());
 
+    }
+
+    private void onLoadValitator() {
+        validator = new AwesomeValidation(TEXT_INPUT_LAYOUT);
+        validator.setTextInputLayoutErrorTextAppearance(R.style.TextInputLayoutErrorStyle);
     }
 
 
@@ -129,10 +136,7 @@ public class RegisterActivity extends AppCompatActivity implements Injectable {
 
         Tools.loadMiniLogo(this,binding.logoImageTop);
     }
-
-
     void register(){
-
         String name = Objects.requireNonNull(binding.tilName.getEditText()).getText().toString();
         String email = Objects.requireNonNull(binding.tilEmail.getEditText()).getText().toString();
         String password = Objects.requireNonNull(binding.tilPassword.getEditText()).getText().toString();
@@ -159,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity implements Injectable {
                         public void onNext(@NotNull Login login) {
 
                             tokenManager.saveToken(login);
-                            startActivity(new Intent(RegisterActivity.this, RegistrationSucess.class));
+//                            startActivity(new Intent(RegisterActivity.this, RegistrationSucess.class));
                             finish();
 
                         }
