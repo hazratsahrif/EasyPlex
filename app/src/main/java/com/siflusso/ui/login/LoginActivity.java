@@ -7,6 +7,7 @@ import static com.siflusso.util.Constants.APP_PASSWORD;
 import static com.siflusso.util.Constants.ARG_MOVIE;
 import static com.siflusso.util.Constants.DEVICE_LIMIT;
 import static com.siflusso.util.Constants.FIRST_PASSWORD_CHECK;
+import static com.siflusso.util.Constants.FIRST_TIME_APP_RUN;
 import static com.siflusso.util.Constants.GOOGLE_CLIENT_ID;
 import static com.siflusso.util.Constants.SERVER_BASE_URL;
 
@@ -95,89 +96,67 @@ import timber.log.Timber;
 
 
 public class LoginActivity extends AppCompatActivity implements Injectable {
-
-
-
     ActivityLoginBinding binding;
-
     com.facebook.AccessTokenTracker accessTokenTracker;
-
     @Inject
     SharedPreferences sharedPreferences;
-
     @Inject
     SharedPreferences.Editor sharedPreferencesEditor;
-
     @Inject
     TokenManager tokenManager;
-
     @Inject
     SettingsManager settingsManager;
-
     @Inject
     AuthRepository authRepository;
-
-
     @Inject
     ViewModelProvider.Factory viewModelFactory;
-
-
     private LoginViewModel loginViewModel;
     private SettingsViewModel settingsViewModel;
-
-
     AwesomeValidation validator;
-
-
     private static final String EMAIL = "email";
     private static final String USER_POSTS = "user_posts";
     private static final String AUTH_TYPE = "rerequest";
     private CallbackManager mCallbackManager;
-
     private GoogleSignInClient mGoogleSignInClient;
-
     private static final int RC_GET_TOKEN = 9002;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         AndroidInjection.inject(this);
-
         super.onCreate(savedInstanceState);
-
-
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         binding.constraintLayout.setVisibility(GONE);
-
-
         loginViewModel = new ViewModelProvider(this, viewModelFactory).get(LoginViewModel.class);
-
         settingsViewModel = new ViewModelProvider(this, viewModelFactory).get(SettingsViewModel.class);
-
         mCallbackManager = CallbackManager.Factory.create();
 
+        if(sharedPreferences.getBoolean(FIRST_TIME_APP_RUN,false)){
+            binding.loginLayout.setVisibility(View.VISIBLE);
+            binding.backgroundLayout.setVisibility(GONE);
+        }
+        else {
+            binding.loginLayout.setVisibility(GONE);
+            binding.backgroundLayout.setVisibility(View.VISIBLE);
+
+        }
         Tools.hideSystemPlayerUi(this, true, 0);
-
         Tools.setSystemBarTransparent(this);
-
         onLoadAppLogo();
         onLoadSplashImage();
         onLoadValitator();
         onSetupRules();
         onLoadGoogleOneTapSigning();
-
         if (!sharedPreferences.getBoolean(FIRST_PASSWORD_CHECK, false)) {
             sharedPreferencesEditor = sharedPreferences.edit();
             sharedPreferencesEditor.putBoolean(FIRST_PASSWORD_CHECK, Boolean.TRUE);
             sharedPreferencesEditor.apply();
-
         }
-
         binding.btnLoginLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sharedPreferencesEditor = sharedPreferences.edit();
+                sharedPreferencesEditor.putBoolean(FIRST_TIME_APP_RUN,Boolean.TRUE);
+                sharedPreferencesEditor.apply();
+
                 binding.loginLayout.setVisibility(View.VISIBLE);
                 binding.backgroundLayout.setVisibility(GONE);
             }
@@ -185,6 +164,7 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
         binding.btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 binding.loginLayout.setVisibility(GONE);
                 binding.backgroundLayout.setVisibility(View.VISIBLE);
             }
@@ -418,7 +398,14 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
 
 
     void skip(){
+
         binding.skipProgressIndicator.setVisibility(View.VISIBLE);
+        sharedPreferencesEditor = sharedPreferences.edit();
+        sharedPreferencesEditor.putBoolean(FIRST_TIME_APP_RUN,Boolean.TRUE);
+        sharedPreferencesEditor.apply();
+
+
+
 
         startActivity(new Intent(LoginActivity.this, BaseActivity.class));
         finish();
@@ -537,11 +524,8 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
 
 
                                     }else {
-
-
                                         binding.loader.setVisibility(GONE);
                                         binding.textViewCheckingAuth.setVisibility(GONE);
-
                                         startActivity(new Intent(LoginActivity.this, BaseActivity.class));
                                         finish();
 
@@ -577,7 +561,8 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
                                 startActivity(intent);
                                 finish();
 
-                            } else if (settingsManager.getSettings().getProfileSelection() == 1 ){
+                            } else
+                                if (settingsManager.getSettings().getProfileSelection() == 1 ){
 
                                 if (!userAuthInfo.getProfiles().isEmpty()) {
 
@@ -590,19 +575,18 @@ public class LoginActivity extends AppCompatActivity implements Injectable {
 
                                     binding.loader.setVisibility(GONE);
                                     binding.textViewCheckingAuth.setVisibility(GONE);
-
                                     startActivity(new Intent(LoginActivity.this, BaseActivity.class));
                                     finish();
 
 
                                 }
 
-                            }else {
+                            }
+                            else {
 
 
                                 binding.loader.setVisibility(GONE);
                                 binding.textViewCheckingAuth.setVisibility(GONE);
-
                                 startActivity(new Intent(LoginActivity.this, BaseActivity.class));
                                 finish();
                             }

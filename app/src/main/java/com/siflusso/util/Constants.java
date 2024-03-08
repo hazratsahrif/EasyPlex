@@ -48,6 +48,7 @@ public abstract class Constants {
 
 
     // Enter your Google Client Id
+//    public static final String GOOGLE_CLIENT_ID = SC.obfuscate("761307543772-g7l3cjf5c0m27p8ncibqbrd3765sq0cv.apps.googleusercontent.com");
     public static final String GOOGLE_CLIENT_ID = SC.obfuscate("19947529194-8v27ktaesjfp0030fh4scs90d602fd1k.apps.googleusercontent.com");
 
     // this is your Authorisation Bearer to access to your api inside the app without it all requests will be rejected
@@ -416,6 +417,7 @@ public abstract class Constants {
     public static final String TRANSPARENT = "Transparent";
     public static final String FIRST_INSTALL = "first_install";
     public static final String FIRST_PASSWORD_CHECK = "first_password_check";
+    public static final String FIRST_TIME_APP_RUN = "first_time_app_run";
 
 
     // Shared Preferences Constants

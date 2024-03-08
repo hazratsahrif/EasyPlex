@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.siflusso.R;
 import com.siflusso.data.model.auth.UserAuthInfo;
 import com.siflusso.data.remote.ErrorHandling;
@@ -90,6 +91,7 @@ public class MoreFragment extends Fragment implements Injectable{
     ViewModelProvider.Factory viewModelFactory;
     @Inject
     AuthRepository authRepository;
+    private GoogleSignInClient mGoogleSignInClient;
     private HomeViewModel homeViewModel;
 
     private SettingsViewModel settingsViewModel;
@@ -478,8 +480,8 @@ public class MoreFragment extends Fragment implements Injectable{
                 authManager.deleteAuth();
                 authManager.deleteSettingsProfile();
                 settingsManager.deleteSettings();
-                startActivity(new Intent(requireActivity(), SplashActivity.class));
-                requireActivity().finish();
+//                startActivity(new Intent(requireActivity(), SplashActivity.class));
+//                requireActivity().finish();
             });
 
         }

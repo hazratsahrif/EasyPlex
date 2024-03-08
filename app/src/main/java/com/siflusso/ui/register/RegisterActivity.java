@@ -2,6 +2,8 @@ package com.siflusso.ui.register;
 
 import static com.basgeekball.awesomevalidation.ValidationStyle.TEXT_INPUT_LAYOUT;
 import static com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade;
+import static com.siflusso.util.Constants.GOOGLE_CLIENT_ID;
+
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -17,6 +19,9 @@ import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.siflusso.R;
 import com.siflusso.data.model.auth.ApiError;
 import com.siflusso.data.model.auth.Login;
@@ -29,6 +34,7 @@ import com.siflusso.ui.manager.TokenManager;
 import com.siflusso.util.DialogHelper;
 import com.siflusso.util.Tools;
 import com.google.gson.Gson;
+import com.stringcare.library.SC;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,55 +65,34 @@ import retrofit2.HttpException;
 
 
 public class RegisterActivity extends AppCompatActivity implements Injectable {
-
-
-
     ActivitySignupBinding binding;
-
     Map<String, List<String>> errors;
-
-
+    private GoogleSignInClient mGoogleSignInClient;
+    private static final int RC_GET_TOKEN = 9002;
     @Inject
     SharedPreferences.Editor sharedPreferencesEditor;
-
     @Inject
     TokenManager tokenManager;
-
     @Inject
     SettingsManager settingsManager;
-
-
     @Inject
     AuthRepository authRepository;
-
     @Inject ViewModelProvider.Factory viewModelFactory;
-
-
     AwesomeValidation validator;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         AndroidInjection.inject(this);
-
         super.onCreate(savedInstanceState);
-
         binding = DataBindingUtil.setContentView(this,R.layout.activity_signup);
-
-
         Tools.hideSystemPlayerUi(this,true,0);
-
         Tools.setSystemBarTransparent(this);
-
         validator = new AwesomeValidation(ValidationStyle.TEXT_INPUT_LAYOUT);
-
         setupRules();
         onLoadAppLogo();
         onLoadValitator();
         onLoadSplashImage();
-
-
+        onLoadGoogleOneTapSigning();
+        binding.btnGoogle.setOnClickListener(v -> signIn());
         binding.btnRegister.setOnClickListener(v -> register());
         binding.goToLogin.setOnClickListener(v -> login());
 
@@ -129,8 +114,22 @@ public class RegisterActivity extends AppCompatActivity implements Injectable {
                 .into(binding.splashImage);
 
     }
+    private void signIn() {
 
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_GET_TOKEN);
+    }
 
+    private void onLoadGoogleOneTapSigning() {
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(SC.reveal(GOOGLE_CLIENT_ID))
+                .requestEmail()
+                .requestServerAuthCode(SC.reveal(GOOGLE_CLIENT_ID))
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+    }
     // Display Main Logo
     private void onLoadAppLogo() {
 

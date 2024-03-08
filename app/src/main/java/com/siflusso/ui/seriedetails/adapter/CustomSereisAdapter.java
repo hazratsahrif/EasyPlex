@@ -1,7 +1,5 @@
-package com.siflusso.ui.moviedetails.adapters;
+package com.siflusso.ui.seriedetails.adapter;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -9,27 +7,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.easyplex.easyplexsupportedhosts.EasyPlexSupportedHosts;
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.siflusso.data.local.entity.Download;
-import com.siflusso.data.local.entity.History;
-import com.siflusso.data.local.entity.Media;
-import com.siflusso.data.model.episode.Episode;
-import com.siflusso.data.model.serie.Season;
-import com.siflusso.data.repository.MediaRepository;
-import com.siflusso.ui.comments.CommentsAdapter;
-import com.siflusso.ui.manager.AuthManager;
-import com.siflusso.ui.manager.SettingsManager;
-import com.siflusso.ui.manager.TokenManager;
-
 import java.util.List;
 
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-
-public class CustomAdapter extends PagerAdapter {
+public class CustomSereisAdapter extends PagerAdapter {
 
     private final List<RecyclerView> recyclerViews;
-    public CustomAdapter(List<RecyclerView> recyclerViews) {
+    public CustomSereisAdapter(List<RecyclerView> recyclerViews) {
         this.recyclerViews = recyclerViews;
     }
 
@@ -59,10 +42,12 @@ public class CustomAdapter extends PagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Overview";
+                return "Episodes";
             case 1:
-                return "Casts";
+                return "Overview";
             case 2:
+                return "Casts";
+            case 3:
                 return "Related";
             default:
                 return null;

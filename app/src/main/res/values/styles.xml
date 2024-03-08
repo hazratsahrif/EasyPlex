@@ -585,12 +585,13 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
-    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-        <item name="boxStrokeColor" tools:override="true">#63FFFFFF</item>
-        <item name="boxStrokeWidth">1dp</item>
-        <item name="colorPrimary">@color/ddfb4b</item>
-        <item name="colorOnSurface">#75FFFFFF</item>
-        <item name="android:textColor">#fff</item>
+    <style name="MyTextInputLayoutStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">#009688</item> <!-- Default stroke color -->
+        <item name="boxStrokeWidth">2dp</item> <!-- Stroke width -->
+        <item name="colorPrimary">#ddfb4b</item> <!-- Focused stroke and text color --><!-- Hovered stroke and text color -->
+        <item name="colorOnSurface">#2F2F39</item> <!-- Default text color -->
+        <item name="android:textColor">#fff</item> <!-- Default text color -->
+        <item name="android:colorControlNormal">#2F2F39</item> <!-- Unactivated stroke color -->
     </style>
 
 

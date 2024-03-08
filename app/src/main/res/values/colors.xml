@@ -13,6 +13,8 @@
     <color name="splashActivityColor">#03DAC5</color>
     <color name="mainColor">#3700B3</color>
 
+    <color name="onstream_gray">#F51F2229</color>
+
     <color name="newSplashScreenColor">#f6f5ec</color>
     <color name="newSplashIconMaskColor">@color/iconMaskColor</color>
 
@@ -30,7 +32,7 @@
     <color name="colorAccent">#121212</color>
     <color name="bottomnavigationbgcolor">#1F252E</color>
     <color name="white">#FFFFFF</color>
-    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#889F9F9F</color>
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#24242C</color>
     <color name="fragment_content_detail_stroke">#1a000000</color>
     <color name="grey_11">#e6e6e6</color>
     <color name="grey_60">#666666</color>
@@ -119,8 +121,11 @@
     <color name="ok">#20B000</color>
     <color name="ok_light">#9CD791</color>
     <color name="light_green">#DDFB4B</color>
-    <color name="black_80">#CD000000</color>
+    <color name="black_80">#121318</color>
     <color name="border_color">#252525</color>
+    <color name="hintcolor">#42464E</color>
+    <color name="btn_google">#2A2E37</color>
+    <color name="os_card">#2A2E37</color>
 
 
 </resources>

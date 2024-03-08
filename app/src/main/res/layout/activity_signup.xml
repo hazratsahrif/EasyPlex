@@ -6,12 +6,13 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:fillViewport="true"
-        android:background="@color/black"
+        android:background="@color/black_80"
         android:layout_height="fill_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
+
             android:layout_height="wrap_content">
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -69,7 +70,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:scaleType="centerInside"
-                            android:src="@drawable/amp_logo"
+                            android:src="@drawable/avatar_default"
                             />
 
 
@@ -94,19 +95,18 @@
                         />
                     <com.google.android.material.textfield.TextInputLayout
                         app:boxCornerRadiusTopEnd="8dp"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:id="@+id/til_name"
                         app:boxCornerRadiusBottomEnd="8dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:theme="@style/MyTextInputLayoutStyle"
                         android:layout_marginTop="20dp"
                         app:boxCornerRadiusBottomStart="8dp"
                         app:boxCornerRadiusTopStart="8dp"
                         android:layout_width="match_parent"
-
                         app:boxStrokeWidthFocused="1.5dp"
                         app:boxStrokeErrorColor="@color/red_A700"
-                        android:theme="@style/TextInputLayoutStyle"
                         app:hintTextColor="@color/ddfb4b"
-                        android:textColorHint="@color/mtrl_textinput_default_box_stroke_color"
+                        android:textColorHint="@color/hintcolor"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
                         app:errorTextColor="@color/red_A700"
@@ -126,23 +126,21 @@
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         app:boxCornerRadiusTopEnd="8dp"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:id="@+id/til_email"
                         app:boxCornerRadiusBottomEnd="8dp"
                         android:layout_marginTop="12dp"
                         app:boxCornerRadiusBottomStart="8dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:theme="@style/MyTextInputLayoutStyle"
                         app:boxCornerRadiusTopStart="8dp"
                         android:layout_width="match_parent"
                         app:boxStrokeWidthFocused="1.5dp"
                         app:boxStrokeErrorColor="@color/red_A700"
-                        android:theme="@style/TextInputLayoutStyle"
+
                         app:hintTextColor="@color/ddfb4b"
-                        android:textColorHint="@color/mtrl_textinput_default_box_stroke_color"
+                        android:textColorHint="@color/hintcolor"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
-                        app:startIconDrawable="@drawable/ic_mail"
-                        app:startIconTint="@color/mtrl_textinput_default_box_stroke_color"
-
 
                         app:errorIconTint="@color/red_A700"
                         app:errorTextColor="@color/red_A700"
@@ -169,6 +167,8 @@
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         app:errorEnabled="true"
                         app:errorTextColor="@color/red_A700"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:theme="@style/MyTextInputLayoutStyle"
                         app:passwordToggleEnabled="true"
                         app:passwordToggleTint="@color/mtrl_textinput_default_box_stroke_color"
                         app:boxCornerRadiusBottomStart="8dp"
@@ -178,9 +178,8 @@
                         app:boxStrokeWidthFocused="1.5dp"
                         app:errorIconTint="@color/red_A700"
                         app:boxStrokeErrorColor="@color/red_A700"
-                        android:theme="@style/TextInputLayoutStyle"
                         app:hintTextColor="@color/ddfb4b"
-                        android:textColorHint="@color/mtrl_textinput_default_box_stroke_color"
+                        android:textColorHint="@color/hintcolor"
                         android:layout_height="wrap_content"
                         android:hint="Password">
 
@@ -213,12 +212,12 @@
                     <com.google.android.material.button.MaterialButton
                         android:layout_width="match_parent"
                         android:id="@+id/btn_google"
-                        android:visibility="gone"
+
                         android:layout_height="58dp"
                         android:layout_marginTop="8dp"
                         app:cornerRadius="8dp"
                         android:drawableLeft="@drawable/flat_color_icons_google"
-                        app:backgroundTint="#2F3337"
+                        app:backgroundTint="@color/btn_google"
                         android:text="Continue with Google"
                         android:textStyle="bold"
                         android:textColor="@color/white"

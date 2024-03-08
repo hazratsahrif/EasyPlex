@@ -6,12 +6,15 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.datatransport.runtime.firebase.transport.LogEventDropped;
 import com.siflusso.data.local.entity.Media;
 import com.siflusso.databinding.ItemRelatedLayoutBinding;
 import com.siflusso.databinding.ItemRelatedsBinding;
@@ -28,6 +31,11 @@ import java.util.List;
 public class RelatedsTabAdapter extends RecyclerView.Adapter<RelatedsTabAdapter.MainViewHolder> {
 
     private List<Media> castList;
+    onClickRelated onClickRelated;
+
+    public RelatedsTabAdapter(com.siflusso.ui.moviedetails.adapters.onClickRelated onClickRelated) {
+        this.onClickRelated = onClickRelated;
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     public void addToContent(List<Media> castList) {
@@ -59,12 +67,7 @@ public class RelatedsTabAdapter extends RecyclerView.Adapter<RelatedsTabAdapter.
     }
 
     class MainViewHolder extends RecyclerView.ViewHolder {
-
-
-
         private final ItemRelatedLayoutBinding binding;
-
-
         MainViewHolder(@NonNull ItemRelatedLayoutBinding binding)
         {
             super(binding.getRoot());
@@ -75,21 +78,35 @@ public class RelatedsTabAdapter extends RecyclerView.Adapter<RelatedsTabAdapter.
 
         void onBind(final int position) {
 
-
-            final Media related = castList.get(position);
+             Media related = castList.get(position);
             Context context = binding.imageMovie.getContext();
+            String tvType = related.getType();
+            String date = related.getReleaseDate();
 
-            binding.movieName.setText(related.getTitle());
 
-                binding.tvType.setText(related.getType());
 
-            binding.tvDate.setText(related.getReleaseDate());
+            if(related != null){
+                if(related.getName()==null){
+                    binding.movieName.setText(related.getTitle());
+                    binding.tvType.setText(related.getType());
+                    binding.tvDate.setText(related.getReleaseDate());
+                }
+                else{
+
+                    binding.movieName.setText(related.getName());
+                    binding.tvType.setText(tvType);
+                    binding.tvDate.setText(date);
+                }
+
+
+            }
+
+
 
             binding.rootLayout.setOnClickListener(v -> {
-                ((Activity)context).finish();
-                Intent intent = new Intent(context, MovieDetailsActivity.class);
-                intent.putExtra(ARG_MOVIE, related);
-                context.startActivity(intent);
+
+                onClickRelated.onClickMovie(related);
+
 
             });
 

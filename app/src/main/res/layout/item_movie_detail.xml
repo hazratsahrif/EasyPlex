@@ -12,7 +12,7 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/myCoordinatorLayout"
             android:layout_width="match_parent"
-            android:background="@color/background_dark"
+            android:background="@color/black_80"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true">
             <com.google.android.material.appbar.AppBarLayout
@@ -364,7 +364,6 @@
                                                 app:strokeWidth="2dp"
                                                 android:gravity="center"
                                                 android:layout_gravity="center"
-                                                app:strokeColor="#EAE3E3"
                                                 android:background="@drawable/download_btn_bg"
                                                 app:cardCornerRadius="12sp"
                                                 android:layout_height="wrap_content"

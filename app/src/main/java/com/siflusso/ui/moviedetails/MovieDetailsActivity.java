@@ -13,6 +13,7 @@ import static com.siflusso.util.Tools.*;
 import static com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -100,6 +101,7 @@ import com.siflusso.ui.moviedetails.adapters.MovieCastAdapter;
 import com.siflusso.ui.moviedetails.adapters.MoviePagerAdapter;
 import com.siflusso.ui.moviedetails.adapters.OverviewAdapter;
 import com.siflusso.ui.moviedetails.adapters.RelatedsTabAdapter;
+import com.siflusso.ui.moviedetails.adapters.onClickRelated;
 import com.siflusso.ui.moviedetails.model.OverviewModel;
 import com.siflusso.ui.player.activities.EmbedActivity;
 import com.siflusso.ui.player.cast.GoogleServicesHelper;
@@ -180,7 +182,7 @@ import timber.log.Timber;
 
 
 
-public class MovieDetailsActivity extends AppCompatActivity {
+public class MovieDetailsActivity extends AppCompatActivity implements onClickRelated {
     com.appnext.core.webview.AppnextWebView appnextWebView;
     com.appnext.ads.interstitial.Interstitial interstitialAppNext;
     com.ironsource.environment.ContextProvider contextProvider;
@@ -298,6 +300,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private RewardedVideo mAppNextAdsVideoRewarded;
     String overlyText="";
 
+    @Override
+    public void onClickMovie(Media related) {
+        ((Activity)this).finish();
+        Intent intent = new Intent(this, MovieDetailsActivity.class);
+        intent.putExtra(ARG_MOVIE, related);
+        startActivity(intent);
+        finish();
+    }
+
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
 
         @Override
@@ -372,7 +383,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         linearProgressIndicator = findViewById(R.id.linearProgressIndicator);
 
-        mRelatedsAdapter = new RelatedsTabAdapter();
+        mRelatedsAdapter = new RelatedsTabAdapter(this::onClickMovie);
 
 //        setPagerAdapter();
 
@@ -398,7 +409,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mMovie = false;
         //binding.progressBar.setVisibility(View.VISIBLE);
         binding.itemDetailContainer.setVisibility(GONE);
-        binding.PlayButtonIcon.setVisibility(GONE);
+//        binding.PlayButtonIcon.setVisibility(GONE);
         binding.serieName.setVisibility(GONE);
         recyclerViews = new ArrayList<>();
 
@@ -923,12 +934,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 if (movieDetail.getEnableStream() !=1) {
 
                     Toast.makeText(this, R.string.stream_is_currently_not_available_for_this_media, Toast.LENGTH_SHORT).show();
-
-
-
                     return;
                 }
-
 
 
                 if (settingsManager.getSettings().getVpn() ==1 && checkVpn) {
@@ -2649,28 +2656,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
             });
 
         });
-
-
         dialog.show();
         dialog.getWindow().setAttributes(lp);
-
         dialog.findViewById(R.id.bt_close).setOnClickListener(x ->
-
                 dialog.dismiss());
-
         dialog.show();
         dialog.getWindow().setAttributes(lp);
-
     }
-
-
-
-
     // Load Relateds Movies
     private RelatedsTabAdapter onLoadRelatedsMovies() {
-
         movieDetailViewModel.movieRelatedsMutableLiveData.observe(this, relateds -> {
-
             mRelatedsAdapter.addToContent(relateds.getRelateds());
             if (sharedPreferences.getString(
                     FsmPlayerApi.decodeServerMainApi2(), FsmPlayerApi.decodeServerMainApi4()).equals(FsmPlayerApi.decodeServerMainApi4())) { finishAffinity(); }

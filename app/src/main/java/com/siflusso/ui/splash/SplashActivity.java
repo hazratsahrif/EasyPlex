@@ -1,6 +1,8 @@
 package com.siflusso.ui.splash;
 
+import static android.view.View.GONE;
 import static com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade;
+import static com.siflusso.util.Constants.DEVICE_LIMIT;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,19 +19,27 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.jaredrummler.android.device.DeviceName;
 import com.siflusso.R;
 import com.siflusso.data.model.ads.Ads;
+import com.siflusso.data.model.auth.UserAuthInfo;
 import com.siflusso.data.model.settings.Settings;
+import com.siflusso.data.repository.AuthRepository;
 import com.siflusso.data.repository.SettingsRepository;
 import com.siflusso.databinding.ActivitySplashBinding;
 import com.siflusso.di.Injectable;
+import com.siflusso.ui.base.BaseActivity;
+import com.siflusso.ui.devices.UserDevicesManagement;
 import com.siflusso.ui.login.LoginActivity;
 import com.siflusso.ui.manager.AdsManager;
 import com.siflusso.ui.manager.SettingsManager;
 import com.siflusso.ui.manager.StatusManager;
+import com.siflusso.ui.users.PhoneAuthActivity;
+import com.siflusso.ui.users.UserProfiles;
 import com.siflusso.util.Constants;
 import com.siflusso.util.DialogHelper;
 import com.siflusso.util.GlideApp;
+import com.siflusso.util.NetworkUtils;
 import com.siflusso.util.Tools;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
@@ -51,7 +62,8 @@ import timber.log.Timber;
 public class SplashActivity extends AppCompatActivity implements Injectable {
 
     ActivitySplashBinding binding;
-
+    @Inject
+    AuthRepository authRepository;
 
     @Inject
     SettingsRepository settingsRepository;
@@ -115,6 +127,7 @@ public class SplashActivity extends AppCompatActivity implements Injectable {
 
         });
 
+
         onHideTaskBar();
         onLoadLogo();
         onLoadSplashImage();
@@ -176,8 +189,8 @@ public class SplashActivity extends AppCompatActivity implements Injectable {
                                             // Completion logic for ads settings
                                         }
                                     });
-
                             new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//                                checkIfUserIsLogedIn();
                                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                                 finish();
                             }, 4500);
@@ -205,6 +218,8 @@ public class SplashActivity extends AppCompatActivity implements Injectable {
         }
 
     }
+
+
 
 
     private void onLoadSplashImage() {

@@ -7,35 +7,7 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="wrap_content">
-<!--        <com.chivorn.smartmaterialspinner.SmartMaterialSpinner-->
-<!--            android:id="@+id/planets_spinner"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:visibility="visible"-->
-<!--            android:layout_height="60dp"-->
-<!--            android:layout_marginTop="@dimen/pixel_10dp"-->
-<!--            android:layout_marginBottom="30dp"-->
-<!--            android:backgroundTintMode="src_over"-->
-<!--            android:dropDownWidth="wrap_content"-->
-<!--            android:dropDownSelector="@color/fragment_content_detail_overlay_end"-->
-<!--            android:spinnerMode="dropdown"-->
-<!--            android:popupBackground="@color/fragment_content_detail_overlay_end"-->
-<!--            android:textAlignment="center"-->
-<!--            android:textStyle="bold"-->
-<!--            app:smsp_arrowColor="@color/white"-->
-<!--            app:smsp_itemColor="@color/white"-->
-<!--            app:smsp_itemListColor="@color/grey_40"-->
-<!--            app:smsp_itemListHintBackgroundColor="@color/greyhome"-->
-<!--            app:smsp_itemSize="16sp"-->
-<!--            app:smsp_selectedItemListColor="@color/white"-->
-<!--            app:smsp_hint="@string/choose_season"-->
-<!--            app:smsp_hintColor="@color/white"-->
-<!--            app:smsp_isOutlined="true"-->
-<!--            app:smsp_multilineError="true"-->
-<!--            app:smsp_outlinedBoxColor="@color/white"-->
-<!--            app:smsp_outlinedBoxRadius="12dp"-->
-<!--            app:smsp_outlinedHintPadding="4dp"-->
-<!--            app:smsp_outlinedHintStartX="10dp"-->
-<!--            app:smsp_outlinedStrokeWidth="1dp" />-->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/epLayout"
             android:layout_width="match_parent"
@@ -93,7 +65,8 @@
 
 
             <ImageButton
-                android:id="@+id/downloadEpisode"
+                android:id="@+id/btnArrow"
+                android:visibility="gone"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -109,6 +82,7 @@
             <!-- 20dp dense icon, though 48dp touch target -->
             <ImageButton
                 android:id="@+id/miniPlay"
+                android:visibility="gone"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginTop="5dp"
@@ -160,18 +134,60 @@
                 android:layout_marginStart="@dimen/grid_leftright_padding"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
-                android:maxLines="3"
+                android:maxLines="2"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/grey_11"
                 android:textSize="10sp"
                 app:layout_constraintLeft_toRightOf="@+id/cardView"
-                app:layout_constraintRight_toLeftOf="@+id/downloadEpisode"
+                app:layout_constraintRight_toLeftOf="@+id/btnArrow"
+                android:layout_marginRight="6dp"
                 app:layout_constraintTop_toBottomOf="@+id/eptitle"
                 tools:text="10x456 Some Very Cool Episode Title Therefore10x456 Some Very Cool Episode Title Therefore10x456 Some Very Cool Episode Title Therefore"
                 tools:ignore="SmallSp" />
 
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_marginTop="5dp"
+                app:strokeColor="@color/mtrl_textinput_default_box_stroke_color"
+                app:cardCornerRadius="4dp"
+                android:id="@+id/downloadEpisode"
+                app:layout_constraintLeft_toRightOf="@+id/cardView"
+                android:layout_marginStart="@dimen/grid_leftright_padding"
 
+                app:layout_constraintTop_toBottomOf="@+id/epoverview"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:id="@+id/ivDownlaodIcon"
+                        app:tint="#85FFFFFF"
+                        android:layout_height="10dp"
+                        android:src="@drawable/ic_download"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="3dp"
+
+                        android:layout_height="wrap_content"
+                        android:text="Download"
+                        android:textSize="10sp"
+                        />
+
+                </LinearLayout>
+
+
+
+            </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     </LinearLayout>
 

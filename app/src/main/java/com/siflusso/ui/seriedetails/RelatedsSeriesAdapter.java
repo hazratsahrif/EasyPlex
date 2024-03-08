@@ -76,7 +76,6 @@ public class RelatedsSeriesAdapter extends RecyclerView.Adapter<RelatedsSeriesAd
             final Media related = castList.get(position);
             Context context = binding.imageMovie.getContext();
 
-            binding.movieName.setText(related.getName());
 
 
             binding.rootLayout.setOnClickListener(v -> {

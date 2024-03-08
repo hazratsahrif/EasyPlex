@@ -106,6 +106,7 @@
                             app:strokeWidth="0dp"
                             android:elevation="0dp"
                             app:cardElevation="0dp"
+                            app:cardBackgroundColor="@color/os_card"
                             android:layout_gravity="center"
                             android:layout_height="wrap_content">
 
@@ -137,6 +138,7 @@
                             android:layout_weight="1"
                             android:id="@+id/btn_my_list"
                             android:layout_marginHorizontal="8dp"
+                            app:cardBackgroundColor="@color/os_card"
                             app:strokeWidth="0dp"
                             android:elevation="0dp"
                             app:cardElevation="0dp"
@@ -173,6 +175,7 @@
                     app:cardUseCompatPadding="true"
                     android:id="@+id/layoutLogOff"
                     android:visibility="gone"
+                    app:cardBackgroundColor="@color/os_card"
                     app:strokeWidth="0dp"
                     android:layout_height="wrap_content">
                     <LinearLayout
@@ -614,7 +617,7 @@
             android:text="Log out"
             android:textColor="@color/orange"
             android:textStyle="bold"
-            app:strokeColor="@color/border_color"
+            app:strokeColor="@color/mtrl_textinput_default_box_stroke_color"
             app:backgroundTint="@color/black_80"
             android:layout_height="wrap_content"/>
 

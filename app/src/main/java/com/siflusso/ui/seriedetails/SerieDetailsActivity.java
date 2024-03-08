@@ -4,11 +4,11 @@ import static android.view.View.GONE;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade;
-import static com.siflusso.util.Constants.SEASONS;
 import static com.siflusso.util.Constants.UNITY_ADS_BANNER_HEIGHT;
 import static com.siflusso.util.Constants.UNITY_ADS_BANNER_WIDTH;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -129,9 +128,10 @@ import com.siflusso.ui.manager.AuthManager;
 import com.siflusso.ui.manager.SettingsManager;
 import com.siflusso.ui.manager.TokenManager;
 import com.siflusso.ui.moviedetails.adapters.CastAdapter;
-import com.siflusso.ui.moviedetails.adapters.CustomAdapter;
 import com.siflusso.ui.moviedetails.adapters.MovieCastAdapter;
 import com.siflusso.ui.moviedetails.adapters.OverviewAdapter;
+import com.siflusso.ui.moviedetails.adapters.RelatedsTabAdapter;
+import com.siflusso.ui.moviedetails.adapters.onClickRelated;
 import com.siflusso.ui.moviedetails.model.OverviewModel;
 import com.siflusso.ui.player.activities.EasyPlexMainPlayer;
 import com.siflusso.ui.player.activities.EasyPlexPlayerActivity;
@@ -142,6 +142,7 @@ import com.siflusso.ui.player.cast.queue.ui.QueueListViewActivity;
 import com.siflusso.ui.player.cast.settings.CastPreference;
 import com.siflusso.ui.player.cast.utils.Utils;
 import com.siflusso.ui.player.fsm.state_machine.FsmPlayerApi;
+import com.siflusso.ui.seriedetails.adapter.CustomSereisAdapter;
 import com.siflusso.ui.settings.SettingsActivity;
 import com.siflusso.ui.viewmodels.LoginViewModel;
 import com.siflusso.ui.viewmodels.SerieDetailViewModel;
@@ -199,7 +200,7 @@ import timber.log.Timber;
  **/
 
 
-public class SerieDetailsActivity extends AppCompatActivity {
+public class SerieDetailsActivity extends AppCompatActivity implements onClickRelated {
 
 
     com.appnext.core.webview.AppnextWebView appnextWebView;
@@ -209,11 +210,13 @@ public class SerieDetailsActivity extends AppCompatActivity {
     private IronSourceBannerLayout banner;
     private boolean isMovieFav = false;
     private LoginViewModel loginViewModel;
+    RelatedsTabAdapter relatedsAdapter;
+    private boolean webViewLauched = false;
     private static final String TAG = "SerieDetailsActivity";
     private com.google.android.gms.ads.nativead.NativeAd mNativeAd;
     private MediaView nativeAdMedia;
     private NativeAd nativeAd;
-    CustomAdapter pagerAdapter;
+    CustomSereisAdapter pagerAdapter;
     private MaxAdView maxAdView;
     MovieCastAdapter sCastAdapter;
     private MaxNativeAdLoader nativeAdLoader;
@@ -222,6 +225,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
     private String mediaGenre;
     public static final String ARG_MOVIE = "movie";
     SerieDetailsBinding serieDetailsBinding;
+
 
     @Inject
     @Named("vpn")
@@ -237,7 +241,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
     @Named("sniffer")
     @Nullable
     ApplicationInfo provideSnifferCheck;
-
+    SpinnerAdapter spinnerAdapter;
     @Inject
     MediaRepository mediaRepository;
 
@@ -301,12 +305,9 @@ public class SerieDetailsActivity extends AppCompatActivity {
     private boolean internal = false;
     CastAdapter mCastSerieAdapter;
     EpisodeAdapter mEpisodesSerieAdapter;
-
-    ConcatAdapter concatAdapter;
-    EpisodeDropdownAdapter episodeDropdownAdapter;
     private boolean mSerieLoaded;
     private boolean mEpisodesLoaded;
-    private Media serie;
+    private  Media serie;
     private Series series;
     private CastContext mCastContext;
     private final SessionManagerListener<CastSession> mSessionManagerListener =
@@ -319,6 +320,15 @@ public class SerieDetailsActivity extends AppCompatActivity {
     private static final int PRELOAD_TIME_S = 2;
     private String externalId;
     private CommentsAdapter commentsAdapter;
+
+    @Override
+    public void onClickMovie(Media related) {
+        ((Activity)this).finish();
+        Intent intent = new Intent(this, SerieDetailsActivity.class);
+        intent.putExtra(ARG_MOVIE, related);
+        startActivity(intent);
+
+    }
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
 
@@ -403,6 +413,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         serie = intent.getParcelableExtra(ARG_MOVIE);
+        relatedsAdapter = new RelatedsTabAdapter(this::onClickMovie);
 
         if (settingsManager.getSettings().getVpn() ==1 && checkVpn){
 
@@ -461,6 +472,126 @@ public class SerieDetailsActivity extends AppCompatActivity {
             serieDetailsBinding.floatingCommentIcon.setVisibility(GONE);
             serieDetailsBinding.commentsize.setVisibility(GONE);
         }
+
+//        serieDetailsBinding.PlayButtonIcon.setOnClickListener(v -> {
+//
+//
+//            serieDetailsBinding.linearProgressIndicator.setVisibility(View.VISIBLE);
+//            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//                serieDetailsBinding.linearProgressIndicator.setVisibility(View.GONE);
+//            }, 1000); // Hide the progress bar after 1 second
+//
+//
+//
+//            if (series.getEnableStream() !=1) {
+//
+//                Toast.makeText(this, R.string.stream_is_currently_not_available_for_this_media, Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//
+//            if (settingsManager.getSettings().getVpn() ==1 && checkVpn) {
+//
+//                serieDetailsBinding.backbutton.performClick();
+//
+//                ToastHelper(getApplicationContext(),getString(R.string.vpn_message));
+//
+//
+//            }else if (series.getVideos() !=null && !series.getVideos().isEmpty()) {
+//
+//
+//                if (series.getPremuim() == 1 && authManager.getUserInfo().getPremuim() == 1 && tokenManager.getToken() != null) {
+//
+//                    onLoadResumeFromHistory(his,series);
+//
+//
+//
+//                } else  if (settingsManager.getSettings().getEnableWebview() == 1) {
+//
+//
+//                    final Dialog dialog = new Dialog(this);
+//                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                    dialog.setContentView(R.layout.episode_webview);
+//                    dialog.setCancelable(false);
+//                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+//
+//                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+//                    lp.copyFrom(dialog.getWindow().getAttributes());
+//
+//                    lp.gravity = Gravity.BOTTOM;
+//                    lp.width = MATCH_PARENT;
+//                    lp.height = MATCH_PARENT;
+//
+//
+//                    mCountDownTimer = new CountDownTimer(DEFAULT_WEBVIEW_ADS_RUNNING, 1000) {
+//                        @SuppressLint({"SetTextI18n", "SetJavaScriptEnabled"})
+//                        @Override
+//                        public void onTick(long millisUntilFinished) {
+//
+//                            if (!webViewLauched) {
+//
+//                                WebView webView = dialog.findViewById(R.id.webViewVideoBeforeAds);
+//                                webView.getSettings().setJavaScriptEnabled(true);
+//                                webView.setWebViewClient(new WebViewClient());
+//                                WebSettings webSettings = webView.getSettings();
+//                                webSettings.setSupportMultipleWindows(false);
+//                                webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
+//
+//                                if (settingsManager.getSettings().getWebviewLink() !=null && !settingsManager.getSettings().getWebviewLink().isEmpty()) {
+//
+//                                    webView.loadUrl(settingsManager.getSettings().getWebviewLink());
+//
+//                                }else {
+//
+//                                    webView.loadUrl(SERVER_BASE_URL+"webview");
+//                                }
+//
+//                                webViewLauched = true;
+//                            }
+//
+//                        }
+//
+//                        @Override
+//                        public void onFinish() {
+//
+//                            dialog.dismiss();
+//                            onLoadStream(movieDetail);
+//                            webViewLauched = false;
+//                            if (mCountDownTimer != null) {
+//                                mCountDownTimer.cancel();
+//                                mCountDownTimer = null;
+//                            }
+//                        }
+//
+//                    }.start();
+//
+//                    dialog.show();
+//                    dialog.getWindow().setAttributes(lp);
+//
+//
+//                } else if (series.getEnableAdsUnlock() ==1){
+//
+//
+//
+//                } else   if (settingsManager.getSettings().getWachAdsToUnlock() == 1 && series.getPremuim() != 1 && authManager.getUserInfo().getPremuim() == 0) {
+//
+//
+//
+//                } else if (settingsManager.getSettings().getWachAdsToUnlock() == 0 && movieDetail.getPremuim() == 0) {
+//
+//                    onLoadStream(movieDetail);
+//                } else if (authManager.getUserInfo().getPremuim() == 1 && movieDetail.getPremuim() == 0) {
+//
+//                    onLoadStream(movieDetail);
+//
+//                } else {
+//                    DialogHelper.showPremuimWarning(this);
+//                }
+//
+//            }else {
+//
+//                DialogHelper.showNoStreamAvailable(this);
+//            }
+//        });
 
     }
 
@@ -535,11 +666,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
                 onLoadImage(serieDetail.getPosterPath());
                 onLoadTitle(serieDetail.getName());
                 onLoadSeasons(serieDetail);
-                try {
-                    onLoadDate(serieDetail.getFirstAirDate());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+
                 onLoadSynopsis(serieDetail.getOverview());
                 onLoadGenres(serieDetail.getGenres());
                 onLoadBackButton();
@@ -548,6 +675,12 @@ public class SerieDetailsActivity extends AppCompatActivity {
                 onLoadRelatedsMovies(Integer.parseInt(serieDetail.getId()));
                 onLoadSerieCast(serieDetail);
                 onLoadUsersReviews(serieDetail.getVoteAverage());
+                try {
+                    onLoadDate(serieDetail.getFirstAirDate());
+                    setProfilePagerAdapter();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 serieDetailsBinding.review.setOnClickListener(v -> onSentReview(serieDetail));
 
 
@@ -687,7 +820,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
                                             Tools.ToastHelper(getApplicationContext(),getString(R.string.remove_watch_list));
 
-                                            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.add_from_queue);
+                                            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.material_symbols_bookmark);
 
                                         }
 
@@ -708,7 +841,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
 
                             isMovieFav = false;
-                            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.add_from_queue);
+                            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.ic_bookmark);
 
 
                         }else {
@@ -744,17 +877,15 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
 
                                         }
-
                                         @Override
                                         public void onComplete() {
 
                                             //
-
                                         }
                                     });
 
                             isMovieFav = true;
-                            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.ic_in_favorite);
+                            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.material_symbols_bookmark);
                         }
 
                     }else  {
@@ -764,22 +895,15 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
                 });
 
-
                 checkMediaFavorite(serieDetail);
-
                 onCheckSerieResumeHistory(serieDetail);
-
                 serieDetailsBinding.ButtonPlayTrailer.setOnClickListener((View v) -> onLoadTrailer(serieDetail.getPreviewPath(),
                         serieDetail.getTitle(),
                         serieDetail.getBackdropPath(), serieDetail.getTrailerUrl()));
-
-
+                serieDetailsBinding.PlayButtonIcon.setOnClickListener((View v) -> onLoadTrailer(serieDetail.getPreviewPath(),
+                        serieDetail.getTitle(),
+                        serieDetail.getBackdropPath(), serieDetail.getTrailerUrl()));
                 serieDetailsBinding.shareIcon.setOnClickListener(v -> Tools.onShareMedia(this,serieDetail,settingsManager,"serie"));
-
-
-
-
-
             });
 
 
@@ -1067,7 +1191,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
             if (history !=null) {
 
-                serieDetailsBinding.resumePlay.setVisibility(View.VISIBLE);
+//                serieDetailsBinding.resumePlay.setVisibility(View.VISIBLE);
 //                serieDetailsBinding.resumePlayTitle.setText(history.getTitle());
 
                 if (settingsManager.getSettings().getResumeOffline() == 1 && history.getEpisodeId() !=null) {
@@ -1212,7 +1336,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
             }else {
 
-                serieDetailsBinding.resumePlay.setVisibility(GONE);
+//                serieDetailsBinding.resumePlay.setVisibility(GONE);
             }
 
 
@@ -1482,13 +1606,13 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
                     isMovieFav = true;
 
-                    serieDetailsBinding.favoriteImage.setImageResource(R.drawable.ic_in_favorite);
+                    serieDetailsBinding.favoriteImage.setImageResource(R.drawable.material_symbols_bookmark);
 
                 } else {
 
                     isMovieFav = false;
 
-                    serieDetailsBinding.favoriteImage.setImageResource(R.drawable.add_from_queue);
+                    serieDetailsBinding.favoriteImage.setImageResource(R.drawable.ic_bookmark);
 
                 }
 
@@ -1498,12 +1622,12 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
             if (mediaRepository.isSerieFavorite(Integer.parseInt(serieDetail.getId()))) {
 
-            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.ic_in_favorite);
+            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.material_symbols_bookmark);
 
         } else {
 
 
-            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.add_from_queue);
+            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.ic_bookmark);
 
         }
           }
@@ -1539,26 +1663,15 @@ public class SerieDetailsActivity extends AppCompatActivity {
                     sCastAdapter = new MovieCastAdapter(settingsManager,this, internal);
                     sCastAdapter.addCasts(credits.getCasts());
                     // Starring RecycleView
-
                     adapter1 = sCastAdapter;
                     setProfilePagerAdapter();
-
-
-
                 });
-
-
-
-
 
             }
 
         }else {
-
             // Starring RecycleView
-
             internal = true;
-
             mCastAdapter = new CastAdapter(settingsManager,this, true);
             mCastAdapter.addCasts(serieDetail.getCast());
             serieDetailsBinding.recyclerViewCastMovieDetail.setAdapter(mCastAdapter);
@@ -1573,18 +1686,31 @@ public class SerieDetailsActivity extends AppCompatActivity {
         recyclerViews.clear();
         OverviewModel model = new OverviewModel(serieDetailsBinding.serieOverview.getText().toString(),serieDetailsBinding.mgenres.getText().toString());
         OverviewAdapter adapter3 = new OverviewAdapter(this,model);
-        recyclerViews.add(createRecyclerView(adapter1));
+
+        recyclerViews.add(createRecyclerView(spinnerAdapter));
         recyclerViews.add(createRecyclerView(adapter3));
-//        recyclerViews.add(createRecyclerView(mEpisodesSerieAdapter));
-        recyclerViews.add(createRecyclerView(concatAdapter));
-        pagerAdapter = new CustomAdapter(recyclerViews);
+        recyclerViews.add(createRecyclerView(adapter1));
+        recyclerViews.add(createRecyclerView(relatedsAdapter));
+        pagerAdapter = new CustomSereisAdapter(recyclerViews);
         serieDetailsBinding.tabLayout.setupWithViewPager(serieDetailsBinding.viewPager);
         serieDetailsBinding.viewPager.setAdapter(pagerAdapter);
+
+//        recyclerViews.get(1).setNestedScrollingEnabled(true);
         // Add ViewPager change listener
+        serieDetailsBinding.episodeList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                serieDetailsBinding.tabLayout.setScrollPosition(0, 0f, true);
+                serieDetailsBinding.viewPager.setCurrentItem(0);
+                serieDetailsBinding.appbar.setExpanded(false);
+
+            }
+        });
+
         serieDetailsBinding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // Do nothing
+
             }
             @Override
             public void onPageSelected(int position) {
@@ -3014,50 +3140,30 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
 
         if (serieDetail.getSeasons() !=null && !serieDetail.getSeasons().isEmpty()) {
-
             List<Season> spinnerItems = serieDetail.getSeasons();
             Season season = spinnerItems.get(0);
             String episodeId = String.valueOf(season.getId());
             String currentSeason = season.getName();
             String seasonNumber = season.getSeasonNumber();
-            Toast.makeText(this, "Season epsodoe Length" + season.getEpisodes().size(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "Serial Details " + serieDetail.getName(), Toast.LENGTH_SHORT).show();
-            serieDetailsBinding.recyclerViewEpisodes.setLayoutManager(new LinearLayoutManager(SerieDetailsActivity.this));
-            serieDetailsBinding.recyclerViewEpisodes.setHasFixedSize(true);
+            spinnerAdapter = new SpinnerAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
+                    ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail,spinnerItems);
+//            setProfilePagerAdapter();
 
-            concatAdapter = new ConcatAdapter();
-            mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(), seasonNumber, episodeId, currentSeason, sharedPreferences, authManager, settingsManager, mediaRepository
-                    , serieDetail.getName(), serieDetail.getPremuim(), tokenManager, SerieDetailsActivity.this, serieDetail.getPosterPath(), serie, mediaGenre, externalId, serieDetail, spinnerItems);
-            episodeDropdownAdapter = new EpisodeDropdownAdapter(serieDetail.getSeasons());
+//            serieDetailsBinding.recyclerViewEpisodes.setLayoutManager(new LinearLayoutManager(SerieDetailsActivity.this));
+//                    serieDetailsBinding.recyclerViewEpisodes.setHasFixedSize(true);
 
-            episodeDropdownAdapter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(SerieDetailsActivity.this, "Selected " + position, Toast.LENGTH_SHORT).show();
-                    Season season = (Season) parent.getItemAtPosition(position);
-                    String episodeId = String.valueOf(season.getId());
-                    String currentSeason = season.getName();
-                    String seasonNumber = season.getSeasonNumber();
-                    mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
-                }
+//            mEpisodesSerieAdapter = new EpisodeAdapter(serieDetail.getId(),seasonNumber,episodeId,currentSeason,sharedPreferences,authManager,settingsManager,mediaRepository
+//                            ,serieDetail.getName(),serieDetail.getPremuim(),tokenManager,SerieDetailsActivity.this,serieDetail.getPosterPath(),serie,mediaGenre,externalId,serieDetail);
+//
+//                    mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
+//                    serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-
-            concatAdapter.addAdapter(episodeDropdownAdapter);
-            concatAdapter.addAdapter(mEpisodesSerieAdapter);
-
-            mEpisodesSerieAdapter.addSeasons(season.getEpisodes());
-//            serieDetailsBinding.recyclerViewEpisodes.setAdapter(mEpisodesSerieAdapter);
-            serieDetailsBinding.recyclerViewEpisodes.setAdapter(concatAdapter);
 
             /////////  OLD /////
-            serieDetailsBinding.mseason.setText(SEASONS + serieDetail.getSeasons().size());
-            serieDetailsBinding.planetsSpinner.setItem(serieDetail.getSeasons());
-            serieDetailsBinding.planetsSpinner.setSelection(0);
+//            serieDetailsBinding.mseason.setText(SEASONS + serieDetail.getSeasons().size());
+//            serieDetailsBinding.planetsSpinner.setItem(serieDetail.getSeasons());
+//            serieDetailsBinding.planetsSpinner.setSelection(0);
+
 
 
 //            serieDetailsBinding.planetsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -3126,7 +3232,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
             Timber.i("Removed From Watchlist");
             serieDetailViewModel.removeTvFromFavorite(mediaDetail);
 
-            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.add_from_queue);
+            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.ic_bookmark);
 
             Tools.ToastHelper(getApplicationContext(),"Removed: " + mediaDetail.getName());
 
@@ -3137,7 +3243,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
             Timber.i("Added To Watchlist");
             serieDetailViewModel.addtvFavorite(mediaDetail);
 
-            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.ic_in_favorite);
+            serieDetailsBinding.favoriteImage.setImageResource(R.drawable.material_symbols_bookmark);
 
             Tools.ToastHelper(getApplicationContext(),"Added: " + mediaDetail.getName());
 
@@ -3452,15 +3558,12 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
         serieDetailViewModel.getRelatedsSeries(id);
         serieDetailViewModel.movieRelatedsMutableLiveData.observe(this, relateds -> {
-            RelatedsSeriesAdapter relatedsAdapter  = new RelatedsSeriesAdapter();
+            Toast.makeText(this, "Load related"+relateds.getRelateds().size(), Toast.LENGTH_SHORT).show();
+            relatedsAdapter = new RelatedsTabAdapter(this::onClickMovie);
             relatedsAdapter.addToContent(relateds.getRelateds());
+
+//            setProfilePagerAdapter();
             if(!settingReady)finishAffinity();
-            //Relateds Movies RecycleView
-            serieDetailsBinding.rvMylike.setAdapter(relatedsAdapter);
-            serieDetailsBinding.rvMylike.setHasFixedSize(true);
-            serieDetailsBinding.rvMylike.setNestedScrollingEnabled(false);
-            serieDetailsBinding.rvMylike.setLayoutManager(new LinearLayoutManager(SerieDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false));
-            serieDetailsBinding.rvMylike.addItemDecoration(new SpacingItemDecoration(1, Tools.dpToPx(this, 0), true));
             if (sharedPreferences.getString(FsmPlayerApi.decodeServerMainApi2(), FsmPlayerApi.decodeServerMainApi4()).equals(FsmPlayerApi.decodeServerMainApi4())) { finishAffinity();
             }
             if (relatedsAdapter.getItemCount() == 0) {
@@ -3468,12 +3571,12 @@ public class SerieDetailsActivity extends AppCompatActivity {
                 serieDetailsBinding.relatedNotFound.setVisibility(View.VISIBLE);
 
             }else {
-
                 serieDetailsBinding.relatedNotFound.setVisibility(GONE);
+                relatedsAdapter.addToContent(relateds.getRelateds());
+
+                setProfilePagerAdapter();
 
             }
-
-
 
         });
     }
@@ -3539,9 +3642,6 @@ public class SerieDetailsActivity extends AppCompatActivity {
         IronSource.onResume(this);
 
     }
-
-
-
 
 
 

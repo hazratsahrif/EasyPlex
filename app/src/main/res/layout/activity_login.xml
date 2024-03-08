@@ -6,24 +6,21 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/black"
+        android:background="@color/black_80"
         android:fillViewport="true">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <LinearLayout
                 android:id="@+id/loginLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone">
-
+                android:visibility="visible">
                 <androidx.appcompat.widget.Toolbar
                     android:layout_width="match_parent"
+                    android:visibility="visible"
                     android:layout_height="wrap_content">
-
                     <androidx.cardview.widget.CardView
                         android:id="@+id/btnClose"
                         android:layout_width="28dp"
@@ -33,7 +30,6 @@
                         app:cardBackgroundColor="#2F3337"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
-
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -41,22 +37,14 @@
                             android:padding="6dp"
                             android:src="@drawable/round_close_24"
                             app:tint="@color/white">
-
-
                         </ImageView>
-
-
                     </androidx.cardview.widget.CardView>
                 </androidx.appcompat.widget.Toolbar>
-
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="18dp"
                     android:orientation="vertical">
-
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -66,7 +54,7 @@
                         <androidx.cardview.widget.CardView
                             android:layout_width="36dp"
                             android:layout_height="36dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_marginTop="22dp"
                             android:elevation="0dp"
                             app:cardBackgroundColor="#2F3337"
                             app:cardCornerRadius="100dp"
@@ -103,18 +91,18 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
                             android:hint="Your Email"
-                            android:textColorHint="@color/mtrl_textinput_default_box_stroke_color"
-                            android:theme="@style/TextInputLayoutStyle"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:theme="@style/MyTextInputLayoutStyle"
+                            android:textColorHint="@color/hintcolor"
                             app:boxCornerRadiusBottomEnd="8dp"
                             app:boxCornerRadiusBottomStart="8dp"
                             app:boxCornerRadiusTopEnd="8dp"
                             app:boxCornerRadiusTopStart="8dp"
-                            app:boxStrokeErrorColor="#F33636"
-                            app:startIconDrawable="@drawable/ic_mail"
-                            app:startIconTint="@color/mtrl_textinput_default_box_stroke_color"
+                            app:boxStrokeErrorColor="@color/red_A700"
                             app:boxStrokeWidthFocused="1.5dp"
                             app:errorEnabled="true"
-                            app:errorTextColor="#F33636"
+                            app:errorIconTint="@color/red_A700"
+                            app:errorTextColor="@color/red_A700"
                             app:hintTextColor="@color/ddfb4b">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -135,8 +123,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:hint="Password"
-                            android:textColorHint="@color/mtrl_textinput_default_box_stroke_color"
-                            android:theme="@style/TextInputLayoutStyle"
+                            android:textColorHint="@color/hintcolor"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:theme="@style/MyTextInputLayoutStyle"
                             app:boxCornerRadiusBottomEnd="8dp"
                             app:boxCornerRadiusBottomStart="8dp"
                             app:boxCornerRadiusTopEnd="8dp"
@@ -144,10 +133,11 @@
                             app:boxStrokeErrorColor="@color/red_A700"
                             app:boxStrokeWidthFocused="1.5dp"
                             app:errorEnabled="true"
+                            app:errorIconTint="@color/red_A700"
                             app:errorTextColor="@color/red_A700"
                             app:hintTextColor="@color/ddfb4b"
                             app:passwordToggleEnabled="true"
-                            app:passwordToggleTint="@color/mtrl_textinput_default_box_stroke_color">
+                            app:passwordToggleTint="@color/hintcolor">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/editTextPassword"
@@ -194,7 +184,7 @@
                             android:text="Continue with Google"
                             android:textColor="@color/white"
                             android:textStyle="bold"
-                            app:backgroundTint="#2F3337"
+                            app:backgroundTint="@color/btn_google"
                             app:cornerRadius="8dp" />
 
                         <TextView
@@ -762,6 +752,7 @@
             <RelativeLayout
                 android:id="@+id/background_layout"
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:layout_height="match_parent"
                 android:background="@drawable/background_welcome">
 
@@ -826,9 +817,9 @@
 
                         android:layout_height="54dp"
                         android:layout_marginTop="16dp"
-                        app:cardBackgroundColor="@color/black_90"
+                        app:cardBackgroundColor="@color/black_80"
                         app:cornerRadius="8dp"
-                        app:strokeColor="#40FFFFFF"
+                        app:strokeColor="@color/mtrl_textinput_default_box_stroke_color"
                         app:strokeWidth="1.3dp"
 
                         >
